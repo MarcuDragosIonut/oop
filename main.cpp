@@ -62,7 +62,7 @@ public:
         sp.setPosition(poz_x, poz_y);
         return sp;
     }
-    void Command(const std::string c){
+    void Command(const std::string& c){
         if(c=="w") poz_y -= 0.5;
         if(c=="s") poz_y += 0.5;
         if(c=="a") poz_x -= 0.5;
