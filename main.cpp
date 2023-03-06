@@ -11,7 +11,7 @@ class Entity {
     std::string ent_nume="def";
     sf::Texture ent_txtr;
 public:
-    Entity() {}
+    Entity() = default;
     Entity(std::string  nume, int tip_) : tip { tip_ }, ent_nume{std::move( nume )} {}
     Entity(const sf::Texture& texture_, std::string  nume, int tip_) : tip{ tip_ }, ent_nume{std::move( nume )}, ent_txtr { texture_ } {}
     Entity(const Entity& other) : tip{ other.tip }, ent_nume{ other.ent_nume }, ent_txtr{ other.ent_txtr } {}
@@ -21,7 +21,7 @@ public:
         ent_txtr = other.ent_txtr;
         return *this;
     }
-    ~Entity() {}
+    ~Entity() = default;
     friend std::ostream& operator<<(std::ostream& os, const Entity& ent) {
         os << " Nume " << ent.ent_nume << " Tip " << ent.tip << '\n';
         return os;
@@ -36,7 +36,7 @@ class Player {
     std::vector<Entity> inv;
     sf::Texture player_txtr;
 public:
-    Player(sf::Texture texture_, double poz_x_ = 0.0, double poz_y_ = 0.0) : player_txtr{ texture_ }, poz_x { poz_x_ }, poz_y{ poz_y_ } {}
+    explicit Player(const sf::Texture& texture_, double poz_x_ = 0.0, double poz_y_ = 0.0) : poz_x { poz_x_ }, poz_y{ poz_y_ }, player_txtr{ texture_ } {}
     friend std::ostream& operator<<(std::ostream& os, const Player& plr) {
         os << "Hp: " << plr.hp << " Poz player: " << plr.poz_x << ' ' << plr.poz_y << '\n';
         return os;
@@ -75,7 +75,8 @@ class Npc {
     double poz_x, poz_y, hp, at;
     sf::Texture npc_txtr;
 public:
-    Npc(sf::Texture txtr_, double poz_x_ = 0.0, double poz_y_ = 0.0, double hp_ = 10.0 , double at_ = 2.0) : poz_x{ poz_x_ }, poz_y{ poz_y_ }, hp{ hp_ }, at{ at_ }, npc_txtr { txtr_ } {}
+    explicit Npc(const sf::Texture& txtr_, double poz_x_ = 0.0, double poz_y_ = 0.0, double hp_ = 10.0 , double at_ = 2.0)
+    : poz_x{ poz_x_ }, poz_y{ poz_y_ }, hp{ hp_ }, at{ at_ }, npc_txtr { txtr_ } {}
     friend std::ostream& operator<<(std::ostream& os, const Npc& npc) {
         os << "Hp: " << npc.hp << " At "<< npc.at << " Poz npc: " << npc.poz_x << ' ' << npc.poz_y << '\n';
         return os;
