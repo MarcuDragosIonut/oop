@@ -12,8 +12,8 @@ class Entity {
     sf::Texture ent_txtr;
 public:
     Entity() {}
-    Entity(const std::string& nume, int tip_) : ent_nume{ nume }, tip { tip_ } {}
-    Entity(sf::Texture texture_, const std::string& nume, int tip_) : ent_nume{ nume }, tip{ tip_ }, ent_txtr { texture_ } {}
+    Entity(std::string  nume, int tip_) : tip { tip_ }, ent_nume{std::move( nume )} {}
+    Entity(const sf::Texture& texture_, std::string  nume, int tip_) : tip{ tip_ }, ent_nume{std::move( nume )}, ent_txtr { texture_ } {}
     Entity(const Entity& other) : tip{ other.tip }, ent_nume{ other.ent_nume }, ent_txtr{ other.ent_txtr } {}
     Entity& operator=(const Entity& other) {
         tip = other.tip;
@@ -55,12 +55,21 @@ public:
             std::cout << "copiere " << *(vc.rbegin()) << '\n';
         }
     }
-    const sf::Sprite getSprite()
+    sf::Sprite getSprite()
     {
         sf::Sprite sp;
         sp.setTexture(player_txtr);
         sp.setPosition(poz_x, poz_y);
         return sp;
+    }
+    void Command(const sf::Keyboard::Key c){
+        switch(c){
+            case sf::Keyboard::W : poz_y += 0.5;
+            case sf::Keyboard::S : poz_y -= 0.5;
+            case sf::Keyboard::D : poz_x += 0.5;
+            case sf::Keyboard::A : poz_x -= 0.5;
+            default:
+        }
     }
 
 };
@@ -74,7 +83,7 @@ public:
         os << "Hp: " << npc.hp << " At "<< npc.at << " Poz npc: " << npc.poz_x << ' ' << npc.poz_y << '\n';
         return os;
     }
-    const sf::Sprite getSprite()
+    sf::Sprite getSprite()
     {
         sf::Sprite sp;
         sp.setTexture(npc_txtr);
@@ -85,7 +94,7 @@ public:
 
 int main()
 {
-    sf::RenderWindow window(sf::VideoMode(500, 500), "");
+    sf::RenderWindow window(sf::VideoMode(1280, 720), "", sf::Style::Close);
     window.setFramerateLimit(60);
 
     sf::Event event;
@@ -106,7 +115,7 @@ int main()
     p.AddItem(e2);
     std::vector<Entity> v;
     p.Inv(v);
-    for (int i = 0; i < v.size(); i++) std::cout << v[i] << '\n';
+    for (const auto & i : v) std::cout << i << '\n';
 
     Npc n1{n1_txtr, 30, 60};
     while (window.isOpen()) {
@@ -117,6 +126,8 @@ int main()
 
                 window.close();
             }
+        }
+
         }
         window.draw(n1.getSprite());
         window.draw(p.getSprite());
