@@ -62,15 +62,11 @@ public:
         sp.setPosition(poz_x, poz_y);
         return sp;
     }
-    void Command(const sf::Keyboard::Key c){
-        switch(c){
-            case sf::Keyboard::W : poz_y += 0.5;
-            case sf::Keyboard::S : poz_y -= 0.5;
-            case sf::Keyboard::D : poz_x += 0.5;
-            case sf::Keyboard::A : poz_x -= 0.5;
-            default:
-                break;
-        }
+    void Command(const std::string c){
+        if(c=="w") poz_y -= 0.5;
+        if(c=="s") poz_y += 0.5;
+        if(c=="a") poz_x -= 0.5;
+        if(c=="d") poz_x += 0.5;
     }
 
 };
@@ -123,13 +119,20 @@ int main()
 
         while (window.pollEvent(event)) {
 
-            if (event.type == sf::Event::Closed) {
+            if (event.type == sf::Event::Closed || ( event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) ) {
                 window.close();
             }
+        }
+        if(window.hasFocus()) {
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) p.Command("w");
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) p.Command("s");
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) p.Command("d");
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) p.Command("a");
         }
         window.draw(n1.getSprite());
         window.draw(p.getSprite());
         window.display();
+        window.clear();
     }
 
     return 0;
