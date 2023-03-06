@@ -69,6 +69,7 @@ public:
             case sf::Keyboard::D : poz_x += 0.5;
             case sf::Keyboard::A : poz_x -= 0.5;
             default:
+                break;
         }
     }
 
@@ -123,11 +124,8 @@ int main()
         while (window.pollEvent(event)) {
 
             if (event.type == sf::Event::Closed) {
-
                 window.close();
             }
-        }
-
         }
         window.draw(n1.getSprite());
         window.draw(p.getSprite());
