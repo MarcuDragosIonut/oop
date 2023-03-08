@@ -60,8 +60,8 @@
 #gitignore
 # CMake
 # cmake-build-*/
-*.cmake
-*.ninja*
-cmake-build-*/_deps
-cmake-build-*/CMakeFiles
-cmake-build-*/Testing
+\*.cmake
+\*.ninja\*
+cmake-build-\*/_deps
+cmake-build-\*/CMakeFiles
+cmake-build-\*/Testing
