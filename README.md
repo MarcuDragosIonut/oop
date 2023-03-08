@@ -58,10 +58,15 @@
 - adăugați trimiteri către resursele externe care v-au ajutat sau pe care le-ați folosit
 
 #gitignore
-# CMake
-# cmake-build-*/
+\# CMake
+\# cmake-build-\*/
+
 \*.cmake
+
 \*.ninja\*
+
 cmake-build-\*/_deps
+
 cmake-build-\*/CMakeFiles
+
 cmake-build-\*/Testing
