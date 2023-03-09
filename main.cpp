@@ -85,7 +85,7 @@ class Npc {
     sf::Texture npc_txtr;
 public:
     explicit Npc(const sf::Texture& txtr_, double poz_x_ = 0.0, double poz_y_ = 0.0)
-    : orpoz_x{poz_x_ }, poz_x{ poz_x_ }, poz_y{ poz_y_ }, npc_txtr { txtr_ } {}
+            : orpoz_x{poz_x_ }, poz_x{ poz_x_ }, poz_y{ poz_y_ }, npc_txtr { txtr_ } {}
     friend std::ostream& operator<<(std::ostream& os, const Npc& npc) {
         os << " Poz npc: " << npc.poz_x << ' ' << npc.poz_y << '\n';
         return os;
