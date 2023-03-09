@@ -103,15 +103,16 @@ public:
         sp.setPosition(spoz_x, spoz_y);
         return sp;
     }
-    void setOrder(std::string ord){
+    void setOrder(const std::string ord){
         order = ord;
     }
 };
 
+/*
 class Harta{
     std::vector< std::pair< Entity, std::pair<double,double> > > Obj;
 };
-
+*/
 int main()
 {
     sf::RenderWindow window(sf::VideoMode(640, 360), "", sf::Style::Close);
@@ -129,7 +130,7 @@ int main()
     if (!n1_txtr.loadFromFile("n1.png")) std::cout << "n1 txtr\n";
 
 
-    Harta h;
+    //Harta h;
     Player p{p_txtr, 250.0, 250.0};
     Entity e1{"e1", 1}, e2{"e2", 1};
     p.AddItem(e1);
