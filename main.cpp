@@ -103,7 +103,7 @@ public:
         sp.setPosition(spoz_x, spoz_y);
         return sp;
     }
-    void setOrder(const std::string ord){
+    void setOrder(const std::string& ord){
         order = ord;
     }
 };
