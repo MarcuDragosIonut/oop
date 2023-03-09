@@ -32,13 +32,13 @@ public:
 
 class Player {
     double poz_x, poz_y; // pozitie pe harta
-    double hp = 10.0;
+    int jump = 0;
     std::vector<Entity> inv;
     sf::Texture player_txtr;
 public:
     explicit Player(const sf::Texture& texture_, double poz_x_ = 0.0, double poz_y_ = 0.0) : poz_x { poz_x_ }, poz_y{ poz_y_ }, player_txtr{ texture_ } {}
     friend std::ostream& operator<<(std::ostream& os, const Player& plr) {
-        os << "Hp: " << plr.hp << " Poz player: " << plr.poz_x << ' ' << plr.poz_y << '\n';
+        os << " Poz player: " << plr.poz_x << ' ' << plr.poz_y << '\n';
         return os;
     }
     void AddItem(const Entity& e) {
@@ -59,40 +59,62 @@ public:
     {
         sf::Sprite sp;
         sp.setTexture(player_txtr);
-        sp.setPosition(poz_x, poz_y);
+        double spoz_x = poz_x, spoz_y = poz_y;
+        if(jump > 23){
+            poz_y -= 3;
+        }
+        else if(jump > 0 && jump < 20){
+            poz_y += 3;
+        }
+        if(jump > 0) jump--;
+        sp.setPosition(spoz_x, spoz_y);
         return sp;
     }
     void Command(const std::string& c){
-        if(c=="w") poz_y -= 0.5;
-        if(c=="s") poz_y += 0.5;
-        if(c=="a") poz_x -= 0.5;
-        if(c=="d") poz_x += 0.5;
+        if(c=="jump" && jump == 0) jump = 43;
+        if(c=="a") poz_x -= 2.5;
+        if(c=="d") poz_x += 2.5;
     }
 
 };
 
 class Npc {
-    double poz_x, poz_y, hp, at;
+    double orpoz_x, poz_x, poz_y;
+    double dir = 1;
+    std::string order = "idle";
     sf::Texture npc_txtr;
 public:
-    explicit Npc(const sf::Texture& txtr_, double poz_x_ = 0.0, double poz_y_ = 0.0, double hp_ = 10.0 , double at_ = 2.0)
-    : poz_x{ poz_x_ }, poz_y{ poz_y_ }, hp{ hp_ }, at{ at_ }, npc_txtr { txtr_ } {}
+    explicit Npc(const sf::Texture& txtr_, double poz_x_ = 0.0, double poz_y_ = 0.0)
+    : orpoz_x{poz_x_ }, poz_x{ poz_x_ }, poz_y{ poz_y_ }, npc_txtr { txtr_ } {}
     friend std::ostream& operator<<(std::ostream& os, const Npc& npc) {
-        os << "Hp: " << npc.hp << " At "<< npc.at << " Poz npc: " << npc.poz_x << ' ' << npc.poz_y << '\n';
+        os << " Poz npc: " << npc.poz_x << ' ' << npc.poz_y << '\n';
         return os;
     }
     sf::Sprite getSprite()
     {
         sf::Sprite sp;
         sp.setTexture(npc_txtr);
-        sp.setPosition(poz_x, poz_y);
+        double spoz_x = poz_x, spoz_y = poz_y, mvvar = 1.5;
+        if(order=="patrol"){
+            if(std::abs(orpoz_x-spoz_x) > 80) dir *= -1;
+            spoz_x += dir*mvvar;
+            poz_x = spoz_x;
+        }
+        sp.setPosition(spoz_x, spoz_y);
         return sp;
     }
+    void setOrder(std::string ord){
+        order = ord;
+    }
+};
+
+class Harta{
+    std::vector< std::pair< Entity, std::pair<double,double> > > Obj;
 };
 
 int main()
 {
-    sf::RenderWindow window(sf::VideoMode(1280, 720), "", sf::Style::Close);
+    sf::RenderWindow window(sf::VideoMode(640, 360), "", sf::Style::Close);
     window.setFramerateLimit(60);
 
     sf::Event event;
@@ -101,12 +123,13 @@ int main()
     bg.setSize(sf::Vector2f(500, 500));
     bg.setPosition(0, 0);
     bg.setFillColor(sf::Color::Black);
-    window.draw(bg);
 
     sf::Texture p_txtr, n1_txtr;
     if (!p_txtr.loadFromFile("p.png")) std::cout << "p txtr\n";
     if (!n1_txtr.loadFromFile("n1.png")) std::cout << "n1 txtr\n";
 
+
+    Harta h;
     Player p{p_txtr, 250.0, 250.0};
     Entity e1{"e1", 1}, e2{"e2", 1};
     p.AddItem(e1);
@@ -115,7 +138,8 @@ int main()
     p.Inv(v);
     for (const auto & i : v) std::cout << i << '\n';
 
-    Npc n1{n1_txtr, 30, 60};
+    Npc n1{n1_txtr, 200, 60};
+    n1.setOrder("patrol");
     while (window.isOpen()) {
 
         while (window.pollEvent(event)) {
@@ -125,11 +149,11 @@ int main()
             }
         }
         if(window.hasFocus()) {
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) p.Command("w");
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) p.Command("s");
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) p.Command("d");
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) p.Command("a");
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) p.Command("jump");
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) || sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) p.Command("d");
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) || sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) p.Command("a");
         }
+        window.draw(bg);
         window.draw(n1.getSprite());
         window.draw(p.getSprite());
         window.display();
