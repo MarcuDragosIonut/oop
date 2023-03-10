@@ -27,6 +27,9 @@ public:
         return os;
     }
     int getTip() const { return tip; }
+    sf::Texture& getTexture(){
+        return ent_txtr;
+    }
 
 };
 
@@ -108,11 +111,22 @@ public:
     }
 };
 
-/*
 class Harta{
     std::vector< std::pair< Entity, std::pair<double,double> > > Obj;
+public:
+    void addObj(const Entity obj, std::pair<double,double> p){
+        Obj.emplace_back(obj,p);
+    }
+    void drawMap(sf::RenderWindow& window_){
+        for(auto& it:Obj){
+            sf::Sprite sp;
+            sp.setTexture(it.first.getTexture());
+            sp.setPosition(it.second.first, it.second.second);
+            window_.draw(sp);
+        }
+    }
 };
-*/
+
 int main()
 {
     sf::RenderWindow window(sf::VideoMode(640, 360), "", sf::Style::Close);
@@ -125,16 +139,21 @@ int main()
     bg.setPosition(0, 0);
     bg.setFillColor(sf::Color::Black);
 
-    sf::Texture p_txtr, n1_txtr;
+    sf::Texture p_txtr, n1_txtr, floor1_txtr;
     if (!p_txtr.loadFromFile("p.png")) std::cout << "p txtr\n";
     if (!n1_txtr.loadFromFile("n1.png")) std::cout << "n1 txtr\n";
+    if (!floor1_txtr.loadFromFile("floor1.png")) std::cout << "floor1 txtr\n";
 
 
-    //Harta h;
+    Harta h;
+    Entity floor1{floor1_txtr, "floor1", 2};
+    for(double i = 0; i <= 700; i+=40){
+        h.addObj(floor1, {i, 300.0});
+    }
+
     Player p{p_txtr, 250.0, 250.0};
-    Entity e1{"e1", 1}, e2{"e2", 1};
+    Entity e1{"e1", 1};
     p.AddItem(e1);
-    p.AddItem(e2);
     std::vector<Entity> v;
     p.Inv(v);
     for (const auto & i : v) std::cout << i << '\n';
@@ -154,9 +173,13 @@ int main()
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) || sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) p.Command("d");
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) || sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) p.Command("a");
         }
-        window.draw(bg);
+        sf::Sprite sptest;
+        sptest.setTexture(floor1_txtr);
+        sptest.setPosition(250, 300);
+        h.drawMap(window);
         window.draw(n1.getSprite());
         window.draw(p.getSprite());
+        window.draw(sptest);
         window.display();
         window.clear();
     }
