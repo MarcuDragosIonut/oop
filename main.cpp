@@ -114,7 +114,7 @@ public:
 class Harta{
     std::vector< std::pair< Entity, std::pair<double,double> > > Obj;
 public:
-    void addObj(const Entity obj, std::pair<double,double> p){
+    void addObj(const Entity& obj, std::pair<double,double> p){
         Obj.emplace_back(obj,p);
     }
     void drawMap(sf::RenderWindow& window_){
