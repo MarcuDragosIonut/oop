@@ -35,7 +35,7 @@ public:
 
 class Player {
     double poz_x, poz_y; // pozitie pe harta
-    int jump = 0;
+    int jump = 0, podea = 0;
     std::vector<Entity> inv;
     sf::Texture player_txtr;
 public:
@@ -50,6 +50,14 @@ public:
             inv.push_back(e);
         }
     }
+    double getlowHeight(){
+        return poz_y - double(player_txtr.getSize().y);
+    }
+
+    void setPodea(int podea_){
+        podea = podea_;
+    }
+
     void Inv(std::vector<Entity>& vc)
     {
         for (auto& el : inv)
@@ -63,20 +71,23 @@ public:
         sf::Sprite sp;
         sp.setTexture(player_txtr);
         double spoz_x = poz_x, spoz_y = poz_y;
-        if(jump > 23){
+        if(podea == 0 && jump <= 0) poz_y += 1;
+        if(jump > 3){
             poz_y -= 3;
-        }
-        else if(jump > 0 && jump < 20){
-            poz_y += 3;
         }
         if(jump > 0) jump--;
         sp.setPosition(spoz_x, spoz_y);
         return sp;
     }
+    sf::FloatRect getBoundingbox(){
+        sf::Sprite playersprite = getSprite();
+        playersprite.setPosition(playersprite.getPosition().x, playersprite.getPosition().y + 3);
+        return playersprite.getGlobalBounds();
+    }
     void Command(const std::string& c){
-        if(c=="jump" && jump == 0) jump = 43;
-        if(c=="a") poz_x -= 2.5;
-        if(c=="d") poz_x += 2.5;
+        if(c=="jump" && jump == 0 && podea == 1) jump = 20;
+        if(c=="a") poz_x -= 2;
+        if(c=="d") poz_x += 2;
     }
 
 };
@@ -112,18 +123,37 @@ public:
 };
 
 class Harta{
+    Player& p;
     std::vector< std::pair< Entity, std::pair<double,double> > > Obj;
 public:
+    explicit Harta(Player& p) : p(p) {}
+
+    friend std::ostream& operator<<(std::ostream& os, const Harta& h) {
+        os << " Nr obiecte: " << h.Obj.size() << '\n';
+        return os;
+    }
+
     void addObj(const Entity& obj, std::pair<double,double> p){
         Obj.emplace_back(obj,p);
     }
     void drawMap(sf::RenderWindow& window_){
+        sf::FloatRect pb = p.getBoundingbox();
+        int podea = 0;
         for(auto& it:Obj){
             sf::Sprite sp;
             sp.setTexture(it.first.getTexture());
-            sp.setPosition(it.second.first, it.second.second);
+            sp.setPosition(it.second.first, it.second.second); //second.first = x second.second = y
+            std::cout << p.getlowHeight() << '\n';
+            if( it.second.second >= p.getlowHeight() ){
+                std::cout<<"b";
+                if( sp.getGlobalBounds().intersects(pb) ){
+                    std::cout << "a";
+                    podea = 1;
+                }
+            }
             window_.draw(sp);
         }
+        p.setPodea(podea);
     }
 };
 
@@ -144,14 +174,14 @@ int main()
     if (!n1_txtr.loadFromFile("n1.png")) std::cout << "n1 txtr\n";
     if (!floor1_txtr.loadFromFile("floor1.png")) std::cout << "floor1 txtr\n";
 
+    Player p{p_txtr, 250.0, 200.0};
 
-    Harta h;
+    Harta h(p);
     Entity floor1{floor1_txtr, "floor1", 2};
     for(double i = 0; i <= 700; i+=40){
         h.addObj(floor1, {i, 300.0});
     }
 
-    Player p{p_txtr, 250.0, 250.0};
     Entity e1{"e1", 1};
     p.AddItem(e1);
     std::vector<Entity> v;
@@ -173,13 +203,9 @@ int main()
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) || sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) p.Command("d");
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) || sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) p.Command("a");
         }
-        sf::Sprite sptest;
-        sptest.setTexture(floor1_txtr);
-        sptest.setPosition(250, 300);
         h.drawMap(window);
         window.draw(n1.getSprite());
         window.draw(p.getSprite());
-        window.draw(sptest);
         window.display();
         window.clear();
     }
