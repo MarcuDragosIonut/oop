@@ -123,10 +123,10 @@ public:
 };
 
 class Harta{
-    Player& p;
+    Player& plr;
     std::vector< std::pair< Entity, std::pair<double,double> > > Obj;
 public:
-    explicit Harta(Player& p) : p(p) {}
+    explicit Harta(Player& p) : plr(p) {}
 
     friend std::ostream& operator<<(std::ostream& os, const Harta& h) {
         os << " Nr obiecte: " << h.Obj.size() << '\n';
@@ -137,14 +137,14 @@ public:
         Obj.emplace_back(obj,p);
     }
     void drawMap(sf::RenderWindow& window_){
-        sf::FloatRect pb = p.getBoundingbox();
+        sf::FloatRect pb = plr.getBoundingbox();
         int podea = 0;
         for(auto& it:Obj){
             sf::Sprite sp;
             sp.setTexture(it.first.getTexture());
             sp.setPosition(it.second.first, it.second.second); //second.first = x second.second = y
-            std::cout << p.getlowHeight() << '\n';
-            if( it.second.second >= p.getlowHeight() ){
+            std::cout << plr.getlowHeight() << '\n';
+            if( it.second.second >= plr.getlowHeight() ){
                 std::cout<<"b";
                 if( sp.getGlobalBounds().intersects(pb) ){
                     std::cout << "a";
@@ -153,7 +153,7 @@ public:
             }
             window_.draw(sp);
         }
-        p.setPodea(podea);
+        plr.setPodea(podea);
     }
 };
 
