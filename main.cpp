@@ -35,7 +35,7 @@ public:
 
 class Player {
     double poz_x, poz_y; // pozitie pe harta
-    int jump = 0, podea = 0;
+    int jump = 0, podea = 0, doublejump = 1, jumpcd = 0;
     std::vector<Entity> inv;
     sf::Texture player_txtr;
 public:
@@ -58,6 +58,14 @@ public:
         podea = podea_;
     }
 
+    int getJumpCD(){
+        return jumpcd;
+    }
+
+    int setJumpCD(int jumpcd_){
+        jumpcd = jumpcd_;
+    }
+
     void Inv(std::vector<Entity>& vc)
     {
         for (auto& el : inv)
@@ -66,22 +74,28 @@ public:
             std::cout << "copiere " << *(vc.rbegin()) << '\n';
         }
     }
-    sf::Sprite getSprite()
+    sf::Sprite getSprite(std::string caz="render")
     {
         sf::Sprite sp;
         sp.setTexture(player_txtr);
-        double spoz_x = poz_x, spoz_y = poz_y;
-        if(podea == 0 && jump <= 0) poz_y += 1;
-        if(jump > 5){
-            poz_y -= 3;
+        if(caz=="render") {
+            if (podea == 0 && jump == 0) poz_y += 2;
+            if (jump > 5) {
+                poz_y -= 4;
+            }
+            if (jump > 0) jump--;
+            if (podea == 1) doublejump = 0;
         }
-        if(jump > 0) jump--;
-        sp.setPosition(spoz_x, spoz_y);
+        sp.setPosition(poz_x, poz_y);
         return sp;
     }
 
     void Command(const std::string& c){
-        if(c=="jump" && jump == 0 && podea == 1) jump = 25;
+        if(c=="jump" && (podea==1 || (jump < 3 && !podea && !doublejump)))
+        {
+            if(podea == 0) doublejump = 1;
+            jump += 25;
+        }
         if(c=="a") poz_x -= 2;
         if(c=="d") poz_x += 2;
     }
@@ -91,7 +105,9 @@ public:
 class Npc {
     double orpoz_x, poz_x, poz_y;
     double dir = 1;
+    int podea = 0;
     std::string order = "idle";
+    std::vector<Entity> drops;
     sf::Texture npc_txtr;
 public:
     explicit Npc(const sf::Texture& txtr_, double poz_x_ = 0.0, double poz_y_ = 0.0)
@@ -100,21 +116,30 @@ public:
         os << " Poz npc: " << npc.poz_x << ' ' << npc.poz_y << '\n';
         return os;
     }
-    sf::Sprite getSprite()
+    sf::Sprite getSprite(std::string caz="render")
     {
         sf::Sprite sp;
         sp.setTexture(npc_txtr);
-        double spoz_x = poz_x, spoz_y = poz_y, mvvar = 1.5;
-        if(order=="patrol"){
-            if(std::abs(orpoz_x-spoz_x) > 80) dir *= -1;
-            spoz_x += dir*mvvar;
-            poz_x = spoz_x;
+        double spoz_x = poz_x, mvvar = 1.5;
+        if(caz=="render") {
+            if (podea == 0) poz_y += 1;
+            if (order == "patrol") {
+                if (std::abs(orpoz_x - spoz_x) > 80) dir *= -1;
+                spoz_x += dir * mvvar;
+                poz_x = spoz_x;
+            }
         }
-        sp.setPosition(spoz_x, spoz_y);
+        sp.setPosition(spoz_x, poz_y);
         return sp;
     }
     void setOrder(const std::string& ord){
         order = ord;
+    }
+    void setPodea(int podea_){
+        podea = podea_;
+    }
+    double getlowHeight(){
+        return poz_y - double(npc_txtr.getSize().y);
     }
 };
 
@@ -129,23 +154,33 @@ public:
     void addObj(const Entity& obj, std::pair<double,double> p){
         Obj.emplace_back(obj,p);
     }
-    void drawMap(sf::RenderWindow& window_, Player& plr){
-        sf::Sprite ps = plr.getSprite();
-        ps.setPosition(ps.getPosition().x, ps.getPosition().y+2.01);
+    void drawMap(sf::RenderWindow& window_, Player& plr, std::vector<Npc*> npcvect){
+        sf::Sprite ps = plr.getSprite("collision");
+        ps.setPosition(ps.getPosition().x, ps.getPosition().y+2);
         sf::FloatRect pb_low = ps.getGlobalBounds();
-        int podea = 0;
+        plr.setPodea(0);
         for(auto& it:Obj){
             sf::Sprite sp;
             sp.setTexture(it.first.getTexture());
             sp.setPosition(it.second.first, it.second.second); //second.first = x second.second = y
-            if( it.second.second >= plr.getlowHeight() ){
-                if( sp.getGlobalBounds().intersects(pb_low) ){
-                    podea = 1;
+            if (it.second.second >= plr.getlowHeight()) {
+                if (sp.getGlobalBounds().intersects(pb_low)) {
+                    plr.setPodea(1);
+                }
+            }
+           for(auto& npc:npcvect) {
+                if (it.second.second >= npc->getlowHeight()) {
+                    sf::Sprite npcs = npc->getSprite("collision");
+                    npcs.setPosition(npcs.getPosition().x, npcs.getPosition().y+1);
+                    sf::FloatRect npcb_low = npcs.getGlobalBounds();
+                    if (sp.getGlobalBounds().intersects(npcb_low)) {
+                        npc->setPodea(1);
+                    }
                 }
             }
             window_.draw(sp);
         }
-        plr.setPodea(podea);
+
     }
 };
 
@@ -171,7 +206,7 @@ int main()
     Harta h;
     Entity floor1{floor1_txtr, "floor1", 2};
     for(double i = 0; i <= 700; i+=40){
-        h.addObj(floor1, {i, 299.0});
+        h.addObj(floor1, {i, 300.0});
     }
 
     Entity e1{"e1", 1};
@@ -179,7 +214,10 @@ int main()
     std::vector<Entity> v;
     p.Inv(v);
 
+    std::vector<Npc*> npc_vector;
+
     Npc n1{n1_txtr, 200, 60};
+    npc_vector.push_back(&n1);
     n1.setOrder("patrol");
     while (window.isOpen()) {
 
@@ -188,13 +226,20 @@ int main()
             if (event.type == sf::Event::Closed || ( event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) ) {
                 window.close();
             }
+            if(p.getJumpCD() == 1 && event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Space) {
+                p.setJumpCD(0);
+            }
+            if (p.getJumpCD() == 0 && event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Space) {
+                p.Command("jump");
+                p.setJumpCD(1);
+            }
+            //pt ca vreau doar pe apasare folosesc event pt space nu sf::Keyboard::isKeyPressed
         }
         if(window.hasFocus()) {
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) p.Command("jump");
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) || sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) p.Command("d");
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) || sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) p.Command("a");
         }
-        h.drawMap(window, p);
+        h.drawMap(window, p, npc_vector);
         window.draw(n1.getSprite());
         window.draw(p.getSprite());
         window.display();
