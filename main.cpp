@@ -62,7 +62,7 @@ public:
         return jumpcd;
     }
 
-    int setJumpCD(int jumpcd_){
+    void setJumpCD(int jumpcd_){
         jumpcd = jumpcd_;
     }
 
@@ -74,7 +74,7 @@ public:
             std::cout << "copiere " << *(vc.rbegin()) << '\n';
         }
     }
-    sf::Sprite getSprite(std::string caz="render")
+    sf::Sprite getSprite(const std::string& caz="render")
     {
         sf::Sprite sp;
         sp.setTexture(player_txtr);
@@ -116,7 +116,7 @@ public:
         os << " Poz npc: " << npc.poz_x << ' ' << npc.poz_y << '\n';
         return os;
     }
-    sf::Sprite getSprite(std::string caz="render")
+    sf::Sprite getSprite(const std::string& caz="render")
     {
         sf::Sprite sp;
         sp.setTexture(npc_txtr);
