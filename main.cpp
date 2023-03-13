@@ -79,9 +79,7 @@ public:
         sp.setPosition(spoz_x, spoz_y);
         return sp;
     }
-    sf::FloatRect getBoundingbox(){
-        return getSprite().getGlobalBounds();
-    }
+
     void Command(const std::string& c){
         if(c=="jump" && jump == 0 && podea == 1) jump = 25;
         if(c=="a") poz_x -= 2;
