@@ -72,7 +72,7 @@ public:
         sp.setTexture(player_txtr);
         double spoz_x = poz_x, spoz_y = poz_y;
         if(podea == 0 && jump <= 0) poz_y += 1;
-        if(jump > 3){
+        if(jump > 5){
             poz_y -= 3;
         }
         if(jump > 0) jump--;
@@ -80,12 +80,10 @@ public:
         return sp;
     }
     sf::FloatRect getBoundingbox(){
-        sf::Sprite playersprite = getSprite();
-        playersprite.setPosition(playersprite.getPosition().x, playersprite.getPosition().y + 3);
-        return playersprite.getGlobalBounds();
+        return getSprite().getGlobalBounds();
     }
     void Command(const std::string& c){
-        if(c=="jump" && jump == 0 && podea == 1) jump = 20;
+        if(c=="jump" && jump == 0 && podea == 1) jump = 25;
         if(c=="a") poz_x -= 2;
         if(c=="d") poz_x += 2;
     }
@@ -123,11 +121,8 @@ public:
 };
 
 class Harta{
-    Player& plr;
     std::vector< std::pair< Entity, std::pair<double,double> > > Obj;
 public:
-    explicit Harta(Player& p) : plr(p) {}
-
     friend std::ostream& operator<<(std::ostream& os, const Harta& h) {
         os << " Nr obiecte: " << h.Obj.size() << '\n';
         return os;
@@ -136,18 +131,17 @@ public:
     void addObj(const Entity& obj, std::pair<double,double> p){
         Obj.emplace_back(obj,p);
     }
-    void drawMap(sf::RenderWindow& window_){
-        sf::FloatRect pb = plr.getBoundingbox();
+    void drawMap(sf::RenderWindow& window_, Player& plr){
+        sf::Sprite ps = plr.getSprite();
+        ps.setPosition(ps.getPosition().x, ps.getPosition().y+2.01);
+        sf::FloatRect pb_low = ps.getGlobalBounds();
         int podea = 0;
         for(auto& it:Obj){
             sf::Sprite sp;
             sp.setTexture(it.first.getTexture());
             sp.setPosition(it.second.first, it.second.second); //second.first = x second.second = y
-            std::cout << plr.getlowHeight() << '\n';
             if( it.second.second >= plr.getlowHeight() ){
-                std::cout<<"b";
-                if( sp.getGlobalBounds().intersects(pb) ){
-                    std::cout << "a";
+                if( sp.getGlobalBounds().intersects(pb_low) ){
                     podea = 1;
                 }
             }
@@ -176,17 +170,16 @@ int main()
 
     Player p{p_txtr, 250.0, 200.0};
 
-    Harta h(p);
+    Harta h;
     Entity floor1{floor1_txtr, "floor1", 2};
     for(double i = 0; i <= 700; i+=40){
-        h.addObj(floor1, {i, 300.0});
+        h.addObj(floor1, {i, 299.0});
     }
 
     Entity e1{"e1", 1};
     p.AddItem(e1);
     std::vector<Entity> v;
     p.Inv(v);
-    for (const auto & i : v) std::cout << i << '\n';
 
     Npc n1{n1_txtr, 200, 60};
     n1.setOrder("patrol");
@@ -203,7 +196,7 @@ int main()
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) || sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) p.Command("d");
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) || sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) p.Command("a");
         }
-        h.drawMap(window);
+        h.drawMap(window, p);
         window.draw(n1.getSprite());
         window.draw(p.getSprite());
         window.display();
