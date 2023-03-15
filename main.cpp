@@ -54,6 +54,10 @@ public:
         return poz_y - double(player_txtr.getSize().y);
     }
 
+    double getX(){
+        return poz_x;
+    }
+
     void setPodea(int podea_){
         podea = podea_;
     }
@@ -236,8 +240,16 @@ int main()
             //pt ca vreau doar pe apasare folosesc event pt space nu sf::Keyboard::isKeyPressed
         }
         if(window.hasFocus()) {
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) || sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) p.Command("d");
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) || sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) p.Command("a");
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) || sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
+                sf::View winview=window.getView();
+                if(100 < p.getX() && p.getX() < 500 )window.setView(sf::View(sf::Vector2f(winview.getCenter().x + 2, winview.getCenter().y), winview.getSize()));
+                p.Command("d");
+            }
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) || sf::Keyboard::isKeyPressed(sf::Keyboard::Left)){
+                sf::View winview=window.getView();
+                if(100 < p.getX() and p.getX() < 500 )window.setView(sf::View(sf::Vector2f(winview.getCenter().x - 2, winview.getCenter().y), winview.getSize()));
+                p.Command("a");
+            }
         }
         h.drawMap(window, p, npc_vector);
         window.draw(n1.getSprite());
