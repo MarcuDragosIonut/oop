@@ -1,0 +1,4 @@
+space = saritura
+space de doua ori = dublu saritura
+a,d / sageata stanga,dreapta = stanga, dreapta
+cam atat
