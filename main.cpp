@@ -216,15 +216,15 @@ public:
             if (sp.getGlobalBounds().intersects(pb_high)) sus_ = 1;
             if (sp.getGlobalBounds().intersects(pb_right)) dreapta_ = 1;
             if (sp.getGlobalBounds().intersects(pb_left)) stanga_ = 1;
-            for(int itemindex = 0; itemindex < itemvect.size(); itemindex++){
+            for(unsigned int itemindex = 0; itemindex < itemvect.size(); itemindex++){
                 sf::Sprite itemsp = itemvect[itemindex]->getSprite("collision");
                 itemsp.setPosition(itemsp.getPosition().x, itemsp.getPosition().y + 2);
                 if(itemsp.getGlobalBounds().intersects(sp.getGlobalBounds())) itemcollisions[itemindex] = 1;
             }
-            for(int itemindex = 0; itemindex < itemvect.size(); itemindex++){
+            for(unsigned int itemindex = 0; itemindex < itemvect.size(); itemindex++){
                 itemvect[itemindex]->setPodea(itemcollisions[itemindex]);
             }
-            for(int npcindex = 0; npcindex < npcvect.size(); npcindex++) {
+            for(unsigned int npcindex = 0; npcindex < npcvect.size(); npcindex++) {
                 sf::Sprite npcs = npcvect[npcindex]->getSprite("collision");
                 npcs.setPosition(npcs.getPosition().x, npcs.getPosition().y+2);
                 sf::FloatRect npcb_low = npcs.getGlobalBounds();
@@ -239,7 +239,7 @@ public:
                 if (sp.getGlobalBounds().intersects(npcb_left)) npccollisions[npcindex][2] = 1;
                 if (sp.getGlobalBounds().intersects(npcb_right)) npccollisions[npcindex][3] = 1;
             }
-            for(int npcindex = 0; npcindex < npcvect.size(); npcindex++){
+            for(unsigned int npcindex = 0; npcindex < npcvect.size(); npcindex++){
                 npcvect[npcindex]->setCollisions(npccollisions[npcindex][0], npccollisions[npcindex][1], npccollisions[npcindex][2], npccollisions[npcindex][3]);
             }
             plr.setCollisions(podea_, sus_, stanga_, dreapta_);
