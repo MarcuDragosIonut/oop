@@ -156,7 +156,6 @@ public:
         for(auto& it:plref){
             if(it.second.getElapsedTime() < sf::seconds(30)){
                 jpmod += it.first.getJ();
-                std::cout << jpmod << '\n';
             }
         }
         return jpmod;
