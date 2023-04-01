@@ -102,7 +102,6 @@ int main()
             window.draw(npc->getSprite("render"));
             //std::cout << npc->getX() << ' ';
         }
-        std::cout << '\n';
         for(auto& item:itemvect){
             if(item->status() == 0)window.draw(item->getSprite());
         }

@@ -3,7 +3,7 @@
 class Character{
 protected:
     double poz_x, poz_y;
-    int left, right, up, floor;
+    int left = 0, right = 0, up = 0, floor = 0;
     sf::Texture char_txtr, char_dead_txtr;
     int ms = 2, jp = 4;
     int mort = 0;
@@ -99,7 +99,7 @@ public:
         }
         return jpmod;
     }
-    void setMovement(){
+    void setMovement() override{
         int jpmod = getjpmod();
         if (floor == 0 && jump == 0) poz_y += 2;
         if (jump > 5) {
@@ -150,11 +150,9 @@ public:
         order = ord;
     }
 
-    void setMovement(){
+    void setMovement() override{
         if(floor == 0) poz_y += 2;
         if(order == "patrol"){
-            //std:: cout << left << ' ' << right << '\n';
-            std:: cout << dir << '\n';
             if(dir == 1){
                 if(right > 0) dir = -1;
                 if(floor == 1)poz_x += ms - right;
