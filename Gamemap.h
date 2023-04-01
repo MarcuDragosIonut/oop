@@ -59,8 +59,9 @@ public:
         int podea_ = 0, sus_ = 0, dreapta_ = 0, stanga_ = 0;
         std::vector < std::vector<int> > npccollisions(npcvect.size(), {0, 0, 0, 0});
         std::vector < int > itemcollisions(itemvect.size(), 0);
-
+        int xi = 0;
         for(auto& it:Obj){
+            xi++;
             sf::Sprite sp;
             sp.setTexture(it.first.getTexture());
             sp.setPosition(it.second.first, it.second.second); //second.first = x second.second = y
@@ -72,7 +73,9 @@ public:
                     podea_ = 1;
                 }
             }
-            if (sp.getGlobalBounds().intersects(pb_high)) sus_ = 1;
+            if (sp.getGlobalBounds().intersects(pb_high)) {
+                if(sus_ == 0) sus_ =  plr.getJP()+plr.getjpmod() - (plr.getY()- (sp.getPosition().y + sp.getTexture()->getSize().y));
+            }
             if (sp.getGlobalBounds().intersects(pb_right))
             {
                 if(it.first.getTip() == 3) lvlwon = 1;
@@ -100,6 +103,7 @@ public:
             //npcs
             for(unsigned int npcindex = 0; npcindex < npcvect.size(); npcindex++) {
                 sf::Sprite npcs = npcvect[npcindex]->getSprite("collision");
+                //if(xi == 1)std::cout << npcs.getPosition().x << ' ';
                 npcs.setPosition(npcs.getPosition().x, npcs.getPosition().y+2);
                 sf::FloatRect npcb_low = npcs.getGlobalBounds();
                 npcs.setPosition(npcs.getPosition().x, npcs.getPosition().y-4);
@@ -114,7 +118,7 @@ public:
                 if (sp.getGlobalBounds().intersects(npcb_left)) npccollisions[npcindex][2] = 1;
                 if (sp.getGlobalBounds().intersects(npcb_right)) npccollisions[npcindex][3] = 1;
             }
-
+            //if(xi == 1)std::cout << '\n';
             for(unsigned int npcindex = 0; npcindex < npcvect.size(); npcindex++){
                 npcvect[npcindex]->setCollisions(npccollisions[npcindex][0], npccollisions[npcindex][1], npccollisions[npcindex][2], npccollisions[npcindex][3]);
             }

@@ -27,8 +27,7 @@ class Entity {
     std::string ent_nume="def";
     sf::Texture ent_txtr;
     Effect entef{"default",2,2};
-    int poz_x = 0, poz_y = 0;
-    int podea = 0;
+    int poz_x = 0, poz_y = 0, floor = 0;
 public:
     Entity() = default;
     Entity(std::string  nume, int tip_) : tip { tip_ }, ent_nume{std::move( nume )} {}
@@ -51,8 +50,8 @@ public:
         return ent_txtr;
     }
 
-    void setPodea(int podea_){
-        podea = podea_;
+    void setPodea(int floor_){
+        floor = floor_;
     }
 
     void sterge(){
@@ -73,7 +72,7 @@ public:
     sf::Sprite getSprite(const std::string& caz="render"){
         sf::Sprite itemsprite;
         itemsprite.setTexture(ent_txtr);
-        if(podea == 0 && caz=="render") poz_y += 2;
+        if(floor == 0 && caz=="render") poz_y += 2;
         itemsprite.setPosition(poz_x, poz_y);
         return itemsprite;
     }

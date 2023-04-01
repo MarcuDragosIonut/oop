@@ -8,6 +8,7 @@
 #include "Noncharacters.h"
 #include "Characters.h"
 #include "Gamemap.h"
+#include <memory>
 
 int main()
 {
@@ -22,16 +23,19 @@ int main()
     sf::Color bgcolor(214, 192, 103);
     bg.setFillColor(bgcolor);
 
-    sf::Texture p_txtr, n1_txtr, floor1_txtr, perete_txtr, stea_txtr, e_t, finpost_t, finmesj_t;
+    sf::Texture p_txtr, n_txtr, floor1_txtr, perete_txtr, stea_txtr, e_t, finpost_t, finmesj_t;
+    sf::Texture pdead_txtr, ndead_txtr;
     if (!p_txtr.loadFromFile("p.png")) std::cout << "p txtr\n";
-    if (!n1_txtr.loadFromFile("n1.png")) std::cout << "n1 txtr\n";
+    if (!n_txtr.loadFromFile("n1.png")) std::cout << "n1 txtr\n";
     if (!floor1_txtr.loadFromFile("floor1.png")) std::cout << "floor1 txtr\n";
     if (!perete_txtr.loadFromFile("perete.png")) std::cout << "perete txtr\n";
     if (!stea_txtr.loadFromFile("stea.png")) std::cout << "sabie txtr\n";
     if (!e_t.loadFromFile("e.png")) std::cout << "e txtr\n";
     if (!finpost_t.loadFromFile("fin.png")) std::cout << "finpost txtr\n";
     if (!finmesj_t.loadFromFile("finmes.png")) std::cout << "finmesj txtr\n";
-    Player p{p_txtr, 250.0, 200.0};
+    if(!pdead_txtr.loadFromFile("pmort.png")) std::cout << "pdead txtr\n";
+    if(!ndead_txtr.loadFromFile("n1mort.png")) std::cout << "n1dead txtr\n";
+    Player p{p_txtr, pdead_txtr, 250.0, 200.0};
 
     Entity stea{ stea_txtr, "stea", 1, 450, 100}, stea2{ stea_txtr, "stea2", 1, 770, -500};
     stea.setEffect("stea", 2, 2);
@@ -56,7 +60,7 @@ int main()
 
     std::vector<Npc*> npc_vector;
 
-    Npc n1{n1_txtr, 200, 60}, n2{n1_txtr, 450, 40};
+    Npc n1{n_txtr, ndead_txtr, 200, 60}, n2{n_txtr, ndead_txtr, 450, 40};
     npc_vector.push_back(&n1);
     npc_vector.push_back(&n2);
     n1.setOrder("patrol");
@@ -96,7 +100,9 @@ int main()
         h.drawMap(window, p, npc_vector, itemvect);
         for(auto& npc:npc_vector){
             window.draw(npc->getSprite("render"));
+            //std::cout << npc->getX() << ' ';
         }
+        std::cout << '\n';
         for(auto& item:itemvect){
             if(item->status() == 0)window.draw(item->getSprite());
         }
