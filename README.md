@@ -1,4 +1,4 @@
-# OOP Template
+# Un joc platformer
 
 ### Tema 0
 
@@ -29,7 +29,7 @@
 - [x] moșteniri
   - [ ] clasă cu atribut de tip pointer la o clasă de bază cu derivate
   - [ ] funcții virtuale (pure) apelate prin pointeri de bază din clasa de mai sus, constructori virtuali (clone)
-    -[x] minim o funcție virtuală va fi **specifică temei** (e.g. nu simple citiri/afișări)
+  - [x] minim o funcție virtuală va fi **specifică temei** (e.g. nu simple citiri/afișări)
   - [x] apelarea constructorului din clasa de bază din constructori din derivate
   - [ ] smart pointers
   - [ ] `dynamic_cast`
@@ -56,21 +56,3 @@
 
 - [SFML](https://github.com/SFML/SFML/tree/aa82ea132b9296a31922772027ad5d14c1fa381b) (Zlib)
 - adăugați trimiteri către resursele externe care v-au ajutat sau pe care le-ați folosit
-
-#gitignore
-
-\# CMake
-
-\# cmake-build-\*/
-
-\*.cmake
-
-\*.ninja\*
-
-cmake-build-\*/_deps
-
-cmake-build-\*/CMakeFiles
-
-cmake-build-\*/Testing
-
-descreirea temei: un platformer 2d
