@@ -25,16 +25,16 @@ int main()
 
     sf::Texture p_txtr, n_txtr, floor1_txtr, perete_txtr, stea_txtr, e_t, finpost_t, finmesj_t;
     sf::Texture pdead_txtr, ndead_txtr;
-    if (!p_txtr.loadFromFile("p.png")) std::cout << "p txtr\n";
-    if (!n_txtr.loadFromFile("n1.png")) std::cout << "n1 txtr\n";
-    if (!floor1_txtr.loadFromFile("floor1.png")) std::cout << "floor1 txtr\n";
-    if (!perete_txtr.loadFromFile("perete.png")) std::cout << "perete txtr\n";
-    if (!stea_txtr.loadFromFile("stea.png")) std::cout << "sabie txtr\n";
-    if (!e_t.loadFromFile("e.png")) std::cout << "e txtr\n";
-    if (!finpost_t.loadFromFile("fin.png")) std::cout << "finpost txtr\n";
-    if (!finmesj_t.loadFromFile("finmes.png")) std::cout << "finmesj txtr\n";
-    if(!pdead_txtr.loadFromFile("pmort.png")) std::cout << "pdead txtr\n";
-    if(!ndead_txtr.loadFromFile("n1mort.png")) std::cout << "n1dead txtr\n";
+    if (!p_txtr.loadFromFile("textures\\p.png")) std::cout << "p txtr\n";
+    if (!n_txtr.loadFromFile("textures\\n1.png")) std::cout << "n1 txtr\n";
+    if (!floor1_txtr.loadFromFile("textures\\floor1.png")) std::cout << "floor1 txtr\n";
+    if (!perete_txtr.loadFromFile("textures\\perete.png")) std::cout << "perete txtr\n";
+    if (!stea_txtr.loadFromFile("textures\\stea.png")) std::cout << "sabie txtr\n";
+    if (!e_t.loadFromFile("textures\\e.png")) std::cout << "e txtr\n";
+    if (!finpost_t.loadFromFile("textures\\fin.png")) std::cout << "finpost txtr\n";
+    if (!finmesj_t.loadFromFile("textures\\finmes.png")) std::cout << "finmesj txtr\n";
+    if(!pdead_txtr.loadFromFile("textures\\pmort.png")) std::cout << "pdead txtr\n";
+    if(!ndead_txtr.loadFromFile("textures\\n1mort.png")) std::cout << "n1dead txtr\n";
     Player p{p_txtr, pdead_txtr, 250.0, 200.0};
 
     Entity stea{ stea_txtr, "stea", 1, 450, 100}, stea2{ stea_txtr, "stea2", 1, 770, -500};

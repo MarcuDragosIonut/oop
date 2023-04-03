@@ -81,12 +81,12 @@
 # *.ipr
 
 # CMake
-# cmake-build-*/
-*.cmake
-*.ninja*
-cmake-build-*/_deps
-cmake-build-*/CMakeFiles
-cmake-build-*/Testing
+cmake-build-*/
+#*.cmake
+#*.ninja*
+#cmake-build-*/_deps
+#cmake-build-*/CMakeFiles
+#cmake-build-*/Testing
 
 # Mongo Explorer plugin
 .idea/**/mongoSettings.xml
