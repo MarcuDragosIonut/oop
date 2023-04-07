@@ -28,7 +28,7 @@ public:
     int getStatus(){
         return mort;
     }
-    int Kill(){
+    void Kill(){
         mort = 1;
         char_txtr = char_dead_txtr;
     }
