@@ -1,7 +1,8 @@
 #include <SFML/Graphics.hpp>
+#include <memory>
 
 class Effect{
-    int jumpmod = 2, movmod = 2;
+    int jumpmod = 0, movmod = 0;
     std::string nume;
 public:
     explicit Effect(const std::string& nume_, int jm_, int mm_) : jumpmod {jm_}, movmod {mm_}, nume {nume_} {}
@@ -20,13 +21,16 @@ public:
     int getM(){
         return movmod;
     }
+    const std::string& getName(){
+        return nume;
+    }
 };
 
 class Entity {
     int tip = 0, sters = 0;
     std::string ent_nume="def";
     sf::Texture ent_txtr;
-    Effect entef{"default",2,2};
+    std::shared_ptr<Effect> entef;
     int poz_x = 0, poz_y = 0, floor = 0;
 public:
     Entity() = default;
@@ -62,11 +66,11 @@ public:
         return sters;
     }
 
-    void setEffect(const std::string& numeef, int jm, int mm){
-        entef.setStats(numeef, jm, mm);
+    void setEffect(std::shared_ptr<Effect> newef) {
+        entef = newef;
     }
 
-    Effect getEffect(){
+    std::shared_ptr<Effect> getEffect() {
         return entef;
     }
     sf::Sprite getSprite(const std::string& caz="render"){

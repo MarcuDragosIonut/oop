@@ -3,13 +3,14 @@
 class Character{
 protected:
     double poz_x, poz_y;
+    static inline int gravity = 3;
     int left = 0, right = 0, up = 0, floor = 0;
     sf::Texture char_txtr, char_dead_txtr;
     int ms = 2, jp = 4;
     int mort = 0;
 public:
     Character(const sf::Texture& texture_, const sf::Texture& texture_dead_, double poz_x_ = 0.0, double poz_y_ = 0.0) :
-    poz_x { poz_x_ }, poz_y{ poz_y_ }, char_txtr{ texture_ }, char_dead_txtr {texture_dead_} {}
+            poz_x { poz_x_ }, poz_y{ poz_y_ }, char_txtr{ texture_ }, char_dead_txtr {texture_dead_} {}
     Character(const Character& other) : poz_x {other.poz_x}, poz_y {other.poz_y}, char_txtr {other.char_txtr}, char_dead_txtr {other.char_dead_txtr} {}
     ~Character(){}
     double getX(){
@@ -17,9 +18,6 @@ public:
     }
     double getY(){
         return poz_y;
-    }
-    double getlowHeight(){
-        return poz_y - double(char_txtr.getSize().y);
     }
     int getMS(){
         return ms;
@@ -29,6 +27,13 @@ public:
     }
     int getStatus(){
         return mort;
+    }
+    int Kill(){
+        mort = 1;
+        char_txtr = char_dead_txtr;
+    }
+    static int getGravity(){
+        return gravity;
     }
     void setCollisions(int floor_, int up_, int left_, int right_){
         floor = floor_;
@@ -59,11 +64,11 @@ public:
         os << " Poz player: " << plr.poz_x << ' ' << plr.poz_y << '\n';
         return os;
     }
-    void AddEff(Entity e) {
+    void AddEff(Entity& e) {
         if (e.getTip() == 1)
         {
             sf::Clock timpefect;
-            plref.push_back({e.getEffect(), timpefect});
+            plref.push_back({*(e.getEffect()), timpefect});
         }
     }
 
@@ -82,9 +87,13 @@ public:
 
     int getmsmod(){
         int msmod = 0;
+        std::set<std::string> efecte_aplicate;
         for(auto& it:plref){
             if(it.second.getElapsedTime() < sf::seconds(30)){
-                msmod += it.first.getM();
+                if(!efecte_aplicate.contains(it.first.getName())){
+                    msmod += it.first.getM();
+                    efecte_aplicate.insert(it.first.getName());
+                }
             }
         }
         return msmod;
@@ -92,45 +101,54 @@ public:
 
     int getjpmod(){
         int jpmod = 0;
+        std::set<std::string> efecte_aplicate;
         for(auto& it:plref){
             if(it.second.getElapsedTime() < sf::seconds(30)){
-                jpmod += it.first.getJ();
+                if(!efecte_aplicate.contains(it.first.getName())) {
+                    jpmod += it.first.getJ();
+                    efecte_aplicate.insert(it.first.getName());
+                }
             }
         }
         return jpmod;
     }
     void setMovement() override{
         int jpmod = getjpmod();
-        if (floor == 0 && jump == 0) poz_y += 2;
-        if (jump > 5) {
-            poz_y -= jp+jpmod-up;
-        }
-        if (up != 0 && jump > 5) jump = 4; // daca se da cu capu' sa cada
-        if (jump > 0) jump--;
-        if (floor == 1) doublejump = 0;
+        if(mort) jump = 0;
+        if (floor < gravity && jump == 0) poz_y += gravity-floor ;
+        if(!mort) {
+           if (jump > 5) {
+               poz_y -= jp + jpmod - up;
+           }
+           if (up != 0 && jump > 5) jump = 4; // daca se da cu capu' sa cada
+           if (jump > 0) jump--;
+           if (floor != 0) doublejump = 0;
+       }
     }
 
     int Command(const std::string& c){
         int miscare = 0;
-        if(c=="jump" && (floor==1 || (jump < 3 && !floor && !doublejump)))
-        {
-            if(floor == 0 && up == 0) doublejump = 1;
-            jump += 25;
-            miscare = 1;
+        if(mort == 0) {
+            if(c=="jump" && (floor>0 || (jump < 3 && !floor && !doublejump)))
+            {
+                if(floor == 0 && up == 0) doublejump = 1;
+                jump += 25;
+                miscare = 1;
+            }
+            int msmod = getmsmod();
+            if (c == "a") {
+                double oldpoz = poz_x;
+                poz_x -= ms + msmod - left;
+                if (poz_x != oldpoz)miscare = 1;
+            }
+            if (c == "d") {
+                double oldpoz = poz_x;
+                poz_x += ms + msmod - right;
+                if (poz_x != oldpoz)miscare = 1;
+            }
+            if (c == "e") interact = 1;
+            if (c == "e_release") interact = 0;
         }
-        int msmod = getmsmod();
-        if(c=="a") {
-            double oldpoz = poz_x;
-            poz_x -= ms+msmod-left;
-            if(poz_x != oldpoz)miscare = 1;
-        }
-        if(c=="d") {
-            double oldpoz = poz_x;
-            poz_x += ms+msmod-right;
-            if(poz_x != oldpoz)miscare = 1;
-        }
-        if(c=="e") interact = 1;
-        if(c=="e_release") interact = 0;
         return miscare;
     }
 };
@@ -151,15 +169,17 @@ public:
     }
 
     void setMovement() override{
-        if(floor == 0) poz_y += 2;
-        if(order == "patrol"){
-            if(dir == 1){
-                if(right > 0) dir = -1;
-                if(floor == 1)poz_x += ms - right;
-            }
-            if(dir == -1){
-                if(left > 0) dir = 1;
-                if(floor == 1)poz_x -= ms - left;
+        if(floor < gravity) poz_y += gravity - floor;
+        if(mort == 0) {
+            if (order == "patrol") {
+                if (dir == 1) {
+                    if (right > 0) dir = -1;
+                    if (floor > 0)poz_x += ms - right;
+                }
+                if (dir == -1) {
+                    if (left > 0) dir = 1;
+                    if (floor > 0)poz_x -= ms - left;
+                }
             }
         }
     }

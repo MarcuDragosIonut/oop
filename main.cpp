@@ -1,5 +1,5 @@
 // grupa 151 Marcu Dragos Ionut
-// tema 1 lab poo
+// tema 1,2,3 lab poo
 
 #include <SFML/Graphics.hpp>
 #include <utility>
@@ -38,8 +38,9 @@ int main()
     Player p{p_txtr, pdead_txtr, 250.0, 200.0};
 
     Entity stea{ stea_txtr, "stea", 1, 450, 100}, stea2{ stea_txtr, "stea2", 1, 770, -500};
-    stea.setEffect("stea", 2, 2);
-    stea2.setEffect("stea", 2, 2);
+    Effect efstea{"stea", 2, 2};
+    stea.setEffect(std::make_shared<Effect>(efstea));
+    stea2.setEffect(std::make_shared<Effect>(efstea));
     std::vector<Entity*> itemvect;
     itemvect.push_back(&stea);
     itemvect.push_back(&stea2);
@@ -96,7 +97,7 @@ int main()
             }
         }
         window.draw(bg);
-        if(p.getStatus() == 0)window.draw(p.getSprite());
+        window.draw(p.getSprite());
         h.drawMap(window, p, npc_vector, itemvect);
         for(auto& npc:npc_vector){
             window.draw(npc->getSprite("render"));

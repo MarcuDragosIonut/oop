@@ -5,6 +5,7 @@ class Harta{
     std::vector< std::pair< Entity, std::pair<double,double> > > Obj;
     std::map<std::string, sf::Texture > Textures;
 public:
+    static inline int numr = 0;
     friend std::ostream& operator<<(std::ostream& os, const Harta& h) {
         os << " Nr obiecte: " << h.Obj.size() << '\n';
         return os;
@@ -19,13 +20,15 @@ public:
     }
 
     void drawMap(sf::RenderWindow& window_, Player& plr, std::vector<Npc*> npcvect, std::vector<Entity*> itemvect){
+        numr++;
         if(lvlwon == 1){
             sf::Sprite spfinmesaj;
             spfinmesaj.setTexture(Textures["finmesaj"]);
             spfinmesaj.setPosition(window_.getView().getCenter().x - Textures["finmesaj"].getSize().x, window_.getView().getCenter().y - Textures["finmesaj"].getSize().y);
             window_.draw(spfinmesaj);
         }
-        sf::Sprite ps = plr.getSprite("collision");
+
+        sf::Sprite ps = plr.getSprite("collision"), pscurent = ps;
 
         // items
         for(auto item=itemvect.begin(); item!=itemvect.end();item++){
@@ -37,8 +40,7 @@ public:
                     spbuton.setPosition(spitem.getPosition().x, spitem.getPosition().y - Textures["e"].getSize().y - 5);
                     window_.draw(spbuton);
                     if (plr.interaction()) {
-                        Entity itemaux = **item;
-                        plr.AddEff(itemaux);
+                        plr.AddEff(**item);
                         plr.Command("e_release");
                         (*item)->sterge();
                     }
@@ -47,9 +49,9 @@ public:
         }
         // items
 
-        ps.setPosition(ps.getPosition().x, ps.getPosition().y+2);
+        ps.setPosition(ps.getPosition().x, ps.getPosition().y+plr.getGravity());
         sf::FloatRect pb_low = ps.getGlobalBounds();
-        ps.setPosition(ps.getPosition().x, ps.getPosition().y-2-plr.getJP()-plr.getjpmod());
+        ps.setPosition(ps.getPosition().x, ps.getPosition().y-plr.getGravity()-plr.getJP()-plr.getjpmod());
         sf::FloatRect pb_high = ps.getGlobalBounds();
         ps.setPosition(ps.getPosition().x-plr.getMS()-plr.getmsmod(), ps.getPosition().y+plr.getJP()+plr.getjpmod());
         sf::FloatRect pb_left = ps.getGlobalBounds();
@@ -65,11 +67,9 @@ public:
             sp.setPosition(it.second.first, it.second.second); //second.first = x second.second = y
 
             //player
-            if (it.second.second >= plr.getlowHeight()) {
-                if (sp.getGlobalBounds().intersects(pb_low)){
-                    if(it.first.getTip() == 3) lvlwon = 1;
-                    podea_ = 1;
-                }
+            if (podea_ == 0 && sp.getGlobalBounds().intersects(pb_low)){
+                if(it.first.getTip() == 3) lvlwon = 1;
+                podea_ = plr.getGravity() - ( sp.getPosition().y - plr.getY() - ps.getTexture()->getSize().y);
             }
             if (sp.getGlobalBounds().intersects(pb_high)) {
                 if(sus_ == 0) sus_ =  plr.getJP()+plr.getjpmod() - (plr.getY()- (sp.getPosition().y + sp.getTexture()->getSize().y));
@@ -101,19 +101,31 @@ public:
             //npcs
             for(unsigned int npcindex = 0; npcindex < npcvect.size(); npcindex++) {
                 sf::Sprite npcs = npcvect[npcindex]->getSprite("collision");
-                npcs.setPosition(npcs.getPosition().x, npcs.getPosition().y+2);
+                npcs.setPosition(npcs.getPosition().x, npcs.getPosition().y+plr.getGravity());
                 sf::FloatRect npcb_low = npcs.getGlobalBounds();
-                npcs.setPosition(npcs.getPosition().x, npcs.getPosition().y-4);
+                npcs.setPosition(npcs.getPosition().x, npcs.getPosition().y-plr.getGravity()-2);
                 sf::FloatRect npcb_high = npcs.getGlobalBounds();
                 npcs.setPosition(npcs.getPosition().x-2,npcs.getPosition().y+2);
                 sf::FloatRect npcb_left = npcs.getGlobalBounds();
                 npcs.setPosition(npcs.getPosition().x+4,npcs.getPosition().y);
                 sf::FloatRect npcb_right = npcs.getGlobalBounds();
 
-                if (sp.getGlobalBounds().intersects(npcb_low)) npccollisions[npcindex][0] = 1;
+                if (sp.getGlobalBounds().intersects(npcb_low)) {
+                    npccollisions[npcindex][0] = plr.getGravity() - ( sp.getPosition().y - npcvect[npcindex]->getY() - npcs.getTexture()->getSize().y);
+                }
                 if (sp.getGlobalBounds().intersects(npcb_high)) npccollisions[npcindex][1] = 1;
                 if (sp.getGlobalBounds().intersects(npcb_left)) npccollisions[npcindex][2] = 1;
                 if (sp.getGlobalBounds().intersects(npcb_right)) npccollisions[npcindex][3] = 1;
+                if(npcb_high.intersects(pb_low) && npcvect[npcindex]->getStatus() == 0 && plr.getStatus() == 0){
+                    if(pscurent.getPosition().y + pscurent.getTexture()->getSize().y <= npcs.getPosition().y) {
+                        npcvect[npcindex]->Kill();
+                        //std::cout << "npc "<<numr << '\n';
+                    }
+                    else{
+                        plr.Kill();
+                        //std::cout << "player " << numr << '\n';
+                    }
+                }
             }
             for(unsigned int npcindex = 0; npcindex < npcvect.size(); npcindex++){
                 npcvect[npcindex]->setCollisions(npccollisions[npcindex][0], npccollisions[npcindex][1], npccollisions[npcindex][2], npccollisions[npcindex][3]);
