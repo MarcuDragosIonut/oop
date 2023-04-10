@@ -19,7 +19,7 @@ int main()
 
     sf::RectangleShape bg;
     bg.setSize(sf::Vector2f(2500, 1000));
-    bg.setPosition(-200, 0);
+    bg.setPosition(-300, 0);
     sf::Color bgcolor(214, 192, 103);
     bg.setFillColor(bgcolor);
 

@@ -4,28 +4,28 @@ class Character{
 protected:
     double poz_x, poz_y;
     static inline int gravity = 3;
-    int left = 0, right = 0, up = 0, floor = 0;
+    int left = 0, right = 0, up = 0, floor = 0; // pt collision
     sf::Texture char_txtr, char_dead_txtr;
-    int ms = 2, jp = 4;
+    int ms = 2, jp = 4; // movement speed, jump power
     int mort = 0;
 public:
     Character(const sf::Texture& texture_, const sf::Texture& texture_dead_, double poz_x_ = 0.0, double poz_y_ = 0.0) :
             poz_x { poz_x_ }, poz_y{ poz_y_ }, char_txtr{ texture_ }, char_dead_txtr {texture_dead_} {}
     Character(const Character& other) : poz_x {other.poz_x}, poz_y {other.poz_y}, char_txtr {other.char_txtr}, char_dead_txtr {other.char_dead_txtr} {}
     ~Character(){}
-    double getX(){
+    double getX() const{
         return poz_x;
     }
-    double getY(){
+    double getY() const{
         return poz_y;
     }
-    int getMS(){
+    int getMS() const{
         return ms;
     }
-    int getJP(){
+    int getJP() const{
         return jp;
     }
-    int getStatus(){
+    int getStatus() const{
         return mort;
     }
     void Kill(){
@@ -55,8 +55,8 @@ public:
 };
 
 class Player : public Character{
-    int jump = 0, doublejump = 1, jumpcd = 0;
-    int interact = 0;
+    int jump = 0, doublejump = 1, jumpcd = 0; // jump: cat mai are de sarit, doublejump:
+    int interact = 0; // daca a luat un item (entitate)
     std::vector<std::pair<Effect,sf::Clock>> plref;
 public:
     Player(const sf::Texture &texture, const sf::Texture &textureDead, double pozX, double pozY): Character(texture, textureDead, pozX, pozY) {}
@@ -72,15 +72,15 @@ public:
         }
     }
 
-    int interaction(){
+    int interaction() const{
         return interact;
     }
 
-    int getJumpCD(){
+    int getJumpCD() const {
         return jumpcd;
     }
 
-    void setJumpCD(int jumpcd_){
+    void setJumpCD(int jumpcd_) {
         jumpcd = jumpcd_;
     }
 
@@ -170,7 +170,7 @@ public:
 
     void setMovement() override{
         if(floor < gravity) poz_y += gravity - floor;
-        if(mort == 0) {
+        if(!mort) {
             if (order == "patrol") {
                 if (dir == 1) {
                     if (right > 0) dir = -1;
