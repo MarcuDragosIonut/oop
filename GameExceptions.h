@@ -6,7 +6,7 @@ class eroare_joc : public std::runtime_error{
 
 class eroare_entitate : public eroare_joc{
 public:
-    explicit eroare_entitate(std::string m) : eroare_joc(m){};
+    explicit eroare_entitate(const std::string& m ) : eroare_joc(m){};
 };
 
 void pointerentitate(std::shared_ptr<Effect> ent){
@@ -17,7 +17,7 @@ void pointerentitate(std::shared_ptr<Effect> ent){
 
 class eroare_textura : public eroare_joc{
 public:
-    explicit eroare_textura(std::string m) : eroare_joc(m){};
+    explicit eroare_textura(const std::string& m) : eroare_joc(m){};
 };
 
 void loadtxtr(bool ret){
