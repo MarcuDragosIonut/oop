@@ -2,7 +2,7 @@
 #include <memory>
 
 class Effect{
-    int jumpmod = 0, movmod = 0;
+    int jumpmod = 0, movmod = 0; // jump power modifier, movement speed modifier
     std::string nume;
 public:
     explicit Effect(const std::string& nume_, int jm_, int mm_) : jumpmod {jm_}, movmod {mm_}, nume {nume_} {}
