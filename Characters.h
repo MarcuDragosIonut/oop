@@ -1,4 +1,5 @@
 #include <SFML/Graphics.hpp>
+#include "GameExceptions.h"
 
 class Character{
 protected:
@@ -68,6 +69,12 @@ public:
         if (e.getTip() == 1)
         {
             sf::Clock timpefect;
+            try{
+                pointerentitate(e.getEffect());
+            }
+            catch(eroare_entitate& err){
+                std::cout << "Effect: " << err.what() << '\n';
+            }
             plref.push_back({*(e.getEffect()), timpefect});
         }
     }
@@ -154,6 +161,7 @@ public:
 };
 
 class Npc : public Character{
+protected:
     int dir = 0;
     std::string order = "idle";
 public:
@@ -168,6 +176,17 @@ public:
         order = ord;
     }
 
+    void setPosition(double x, double y){
+        poz_x = x;
+        poz_y = y;
+    }
+
+    //virtual void setMovement() = 0;
+};
+
+class Orange : public Npc{
+public:
+    Orange(const sf::Texture &t, const sf::Texture &tdead, double x, double y) : Npc(t, tdead, x, y) {}
     void setMovement() override{
         if(floor < gravity) poz_y += gravity - floor;
         if(mort == 0) {
@@ -179,6 +198,39 @@ public:
                 if (dir == -1) {
                     if (left > 0) dir = 1;
                     if (floor > 0)poz_x -= ms - left;
+                }
+            }
+        }
+    }
+};
+
+class Verde : public Npc{
+public:
+    Verde(const sf::Texture &t, const sf::Texture &tdead, double x, double y) : Npc(t, tdead, x, y){
+        ms = 5;
+        dir = -1;
+    }
+    void setMovement() override{
+        if(mort == 1 && floor < gravity) poz_y += gravity - floor;
+        if(mort == 0) {
+            if (order == "patrol") {
+                if (dir == 1) {
+                    if (right > 0) dir = -1;
+                    poz_x += ms - right;
+                }
+                if (dir == -1) {
+                    if (left > 0) dir = 1;
+                    poz_x -= ms - left;
+                }
+            }
+            if(order=="fly"){
+                if(dir == 1){
+                    if(!up)poz_y -= jp;
+                    if(poz_y < -100 || up > 0) dir = -1;
+                }
+                else {
+                    poz_y += gravity - floor;
+                    if(floor > 0 || poz_y > 350) dir = 1;
                 }
             }
         }

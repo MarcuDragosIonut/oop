@@ -10,11 +10,11 @@ public:
         os << eff.nume << '\n';
         return os;
     }
-    void setStats(const std::string& n, int j, int m){
+    /*void setStats(const std::string& n, int j, int m){
         nume = n;
         jumpmod = j;
         movmod = m;
-    }
+    }*/
     int getJ(){
         return jumpmod;
     }
@@ -37,11 +37,19 @@ public:
     Entity(std::string  nume, int tip_) : tip { tip_ }, ent_nume{std::move( nume )} {}
     Entity(const sf::Texture& texture_, std::string  nume, int tip_) : tip{ tip_ }, ent_nume{std::move( nume )}, ent_txtr { texture_ } {}
     Entity(const sf::Texture& texture_, std::string  nume, int tip_, int x_, int y_) : tip{ tip_ }, ent_nume{std::move( nume )}, ent_txtr { texture_ }, poz_x {x_}, poz_y {y_} {}
-    Entity(const Entity& other) : tip{ other.tip }, ent_nume{ other.ent_nume }, ent_txtr{ other.ent_txtr } {}
+    Entity(const Entity& other) : tip{ other.tip }, ent_nume{ other.ent_nume }, ent_txtr{ other.ent_txtr }
+    {
+        if(other.entef != nullptr){
+            entef = std::make_shared<Effect>(*(other.entef));
+        }
+        std::cout << "cc\n";
+    }
     Entity& operator=(const Entity& other) {
         tip = other.tip;
         ent_nume = other.ent_nume;
         ent_txtr = other.ent_txtr;
+        entef = std::make_shared<Effect>(*(other.entef));
+        std::cout << "=\n";
         return *this;
     }
     ~Entity() = default;
@@ -52,6 +60,11 @@ public:
     int getTip() const { return tip; }
     sf::Texture& getTexture(){
         return ent_txtr;
+    }
+
+    void setPoz(double x, double y){
+        poz_x = x;
+        poz_y = y;
     }
 
     void setPodea(int floor_){
