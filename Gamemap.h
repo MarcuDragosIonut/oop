@@ -76,7 +76,13 @@ class Harta{
 
     void Drawnpcs(sf::RenderWindow& window_){
         for(auto &it:npcvect){
-            window_.draw(it->getSprite("render"));
+            Npc* npcpointer= it;
+            std::string mov = "Mov";
+            if(typeid(*npcpointer).name() != mov)window_.draw(npcpointer->getSprite("render"));
+            else{
+                auto npcpointer2 = dynamic_cast<Mov*>(npcpointer);
+                window_.draw(npcpointer2->getSprite("render"));
+            }
         }
     }
 

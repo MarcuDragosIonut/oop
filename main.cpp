@@ -22,10 +22,10 @@ int main()
     sf::Color bgcolor(214, 192, 103);
     bg.setFillColor(bgcolor);
 
-    sf::Texture p_txtr, n_txtr, verde_txtr; // characters
+    sf::Texture p_txtr, n_txtr, verde_txtr, mov_txtr; // characters
     sf::Texture floor1_txtr, perete_txtr, peretemic_txtr, stea_txtr, e_t, finpost_t; // map blocks si map items
     sf::Texture mortmesj_t, finmesj_t; // mesaje
-    sf::Texture pdead_txtr, ndead_txtr, verdedead_txtr; // dead characters
+    sf::Texture pdead_txtr, ndead_txtr, verdedead_txtr, movdead_txtr; // dead characters
 
     // player
     try{
@@ -42,6 +42,8 @@ int main()
         loadtxtr(ndead_txtr.loadFromFile("textures\\n1mort.png"));
         loadtxtr(verde_txtr.loadFromFile("textures\\verde.png"));
         loadtxtr(verdedead_txtr.loadFromFile("textures\\verdemort.png"));
+        loadtxtr(mov_txtr.loadFromFile("textures\\mov.png"));
+        loadtxtr(movdead_txtr.loadFromFile("textures\\movmort.png"));
     }
     catch(eroare_textura& err){
         std::cout << "npc: " << err.what() << '\n';
@@ -126,6 +128,7 @@ int main()
     n4.setPosition(1400, -100);
     Verde v1{ verde_txtr, verdedead_txtr, 1100, 100};
     Verde v2 = v1;
+    Mov mv1{ mov_txtr, movdead_txtr, 1400, -100};
     v2.setPosition(900, 210);
     h.addNpc(n1);
     h.addNpc(n2);
@@ -133,12 +136,14 @@ int main()
     h.addNpc(n4);
     h.addNpc(v1);
     h.addNpc(v2);
+    h.addNpc(mv1);
     n1.setOrder("patrol");
     n2.setOrder("patrol");
     n3.setOrder("patrol");
     n4.setOrder("patrol");
     v1.setOrder("patrol");
     v2.setOrder("fly");
+    mv1.setOrder("jump");
 
     while (window.isOpen()) {
         while (window.pollEvent(event)) {

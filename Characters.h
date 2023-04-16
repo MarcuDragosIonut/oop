@@ -237,3 +237,55 @@ public:
     }
 };
 
+class Mov : public Npc{
+    int airtime = 0, transparent = 0;
+    sf::Clock movc;
+public:
+    Mov(const sf::Texture &t, const sf::Texture &tdead, double x, double y) : Npc(t, tdead, x, y){
+        jp = 3;
+    }
+    void setMovement() override{
+        if(floor < gravity && !(order=="jump" && dir == 1)) poz_y += gravity - floor;
+        if(mort == 0) {
+            if (order == "patrol") {
+                if (dir == 1) {
+                    if (right > 0) dir = -1;
+                    poz_x += ms - right;
+                }
+                if (dir == -1) {
+                    if (left > 0) dir = 1;
+                    poz_x -= ms - left;
+                }
+            }
+            if(order=="jump"){
+                if(dir == 1){
+                    if(airtime == 10 || up) dir = -1;
+                    if(!up) {
+                        airtime++;
+                        poz_y -= jp;
+                    }
+                }
+                else {
+                    if(floor) {
+                        dir = 1;
+                        airtime = 0;
+                    }
+                }
+            }
+        }
+    }
+    sf::Sprite getSprite(const std::string& caz="renger") override{
+        sf::Sprite sp;
+        sp.setTexture(char_txtr);
+        if(caz=="render"){
+            setMovement();
+        }
+        if(movc.getElapsedTime().asSeconds() > sf::seconds(10).asSeconds()){
+            transparent = transparent ^ 1;
+            movc.restart();
+        }
+        if(transparent) sp.setColor(sf::Color(sp.getColor().r, sp.getColor().g, sp.getColor().b, 100));
+        sp.setPosition(poz_x, poz_y);
+        return sp;
+    }
+};
