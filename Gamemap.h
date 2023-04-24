@@ -87,7 +87,30 @@ class Harta{
     }
 
 public:
-    static inline int numr = 0;
+    Harta() = default;
+    Harta(const Harta& other) : lvlwon {other.lvlwon}, Obj { other.Obj}, Textures { other.Textures } {
+        while(!npcvect.empty()){
+
+        }
+        for(auto& it:other.npcvect){
+            npcvect.push_back(it);
+        }
+    }
+    Harta& operator=(const Harta& other){
+        lvlwon = other.lvlwon;
+        Obj = other.Obj;
+        Textures = other.Textures;
+        npcvect.clear();
+        for(auto& it:other.npcvect){
+            npcvect.push_back(it);
+        }
+        return *this;
+    }
+    ~Harta(){
+        while(!npcvect.empty()){
+            delete npcvect[npcvect.size()-1];
+        }
+    }
     friend std::ostream& operator<<(std::ostream& os, const Harta& h) {
         os << " Nr obiecte: " << h.Obj.size() << '\n';
         return os;
@@ -106,7 +129,6 @@ public:
     }
 
     void drawMap(sf::RenderWindow& window_, Player& plr, std::vector<Entity*> itemvect){
-        numr++;
 
         sf::Sprite ps = plr.getSprite("collision"), pscurent = ps;
 

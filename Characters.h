@@ -13,7 +13,7 @@ public:
     Character(const sf::Texture& texture_, const sf::Texture& texture_dead_, double poz_x_ = 0.0, double poz_y_ = 0.0) :
             poz_x { poz_x_ }, poz_y{ poz_y_ }, char_txtr{ texture_ }, char_dead_txtr {texture_dead_} {}
     Character(const Character& other) : poz_x {other.poz_x}, poz_y {other.poz_y}, char_txtr {other.char_txtr}, char_dead_txtr {other.char_dead_txtr} {}
-    ~Character(){}
+    virtual ~Character() = default;
     double getX() const{
         return poz_x;
     }
@@ -170,6 +170,7 @@ public:
         os << " Poz npc: " << npc.poz_x << ' ' << npc.poz_y << '\n';
         return os;
     }
+    virtual ~Npc() = default;
 
     void setOrder(const std::string& ord){
         if(ord=="patrol") dir = 1;
@@ -187,6 +188,7 @@ public:
 class Orange : public Npc{
 public:
     Orange(const sf::Texture &t, const sf::Texture &tdead, double x, double y) : Npc(t, tdead, x, y) {}
+    ~Orange() = default;
     void setMovement() override{
         if(floor < gravity) poz_y += gravity - floor;
         if(!mort) {
@@ -210,6 +212,7 @@ public:
         ms = 5;
         dir = -1;
     }
+    ~Verde() = default;
     void setMovement() override{
         if(mort == 1 && floor < gravity) poz_y += gravity - floor;
         if(mort == 0) {
@@ -244,6 +247,7 @@ public:
     Mov(const sf::Texture &t, const sf::Texture &tdead, double x, double y) : Npc(t, tdead, x, y){
         jp = 3;
     }
+    ~Mov() = default;
     void setMovement() override{
         if(floor < gravity && !(order=="jump" && dir == 1)) poz_y += gravity - floor;
         if(mort == 0) {
@@ -298,6 +302,7 @@ public:
         jp = 3;
         ms = 3;
     }
+    ~Fantoma() = default;
     void setMovement() override{
         if(mort == 1 && floor < gravity) poz_y += gravity - floor;
         if(mort == 0) {
