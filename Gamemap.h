@@ -106,11 +106,12 @@ public:
         }
         return *this;
     }
-    ~Harta(){
-        while(!npcvect.empty()){
-            delete npcvect[npcvect.size()-1];
+    /*~Harta(){
+        for(int i = 0 ; i < npcvect.size() ; i++){
+            std::cout << *npcvect[i] << " a \n";
+            delete npcvect[i];
         }
-    }
+    }*/
     friend std::ostream& operator<<(std::ostream& os, const Harta& h) {
         os << " Nr obiecte: " << h.Obj.size() << '\n';
         return os;
