@@ -289,3 +289,35 @@ public:
         return sp;
     }
 };
+
+class Fantoma: public Npc{
+    int movlen = 0; // cat s-a miscat
+public:
+    Fantoma(const sf::Texture& t, const sf::Texture& tmort, double x, double y) : Npc(t, tmort, x, y){
+        dir = 1;
+        jp = 3;
+        ms = 3;
+    }
+    void setMovement() override{
+        if(mort == 1 && floor < gravity) poz_y += gravity - floor;
+        if(mort == 0) {
+            if (order == "patrol") {
+                if (dir == 1) {
+                    poz_x += ms - right;
+                    poz_y -= jp - up;
+                    movlen++;
+                }
+                if (dir == -1) {
+                    poz_x -= ms - left;
+                    poz_y += jp - floor;
+                    movlen++;
+                }
+                if(movlen == 35){
+                    dir *= -1;
+                    movlen = 0;
+                }
+            }
+        }
+    }
+};
+
