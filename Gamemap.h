@@ -63,6 +63,7 @@ class Harta{
             if(npcb_high.intersects(pb_low) && npcvect[npcindex]->getStatus() == 0 && plr.getStatus() == 0){
                 if(pscurent.getPosition().y + pscurent.getTexture()->getSize().y <= npcs.getPosition().y) { // daca player-ul il calca pe npc, il omoara, altfel player-ul moare.
                     npcvect[npcindex]->Kill();
+                    plr.IncreaseScore(npcvect[npcindex]->getScoreValue()); // adaugam punctele de pe npc la scor
                 }
                 else{
                     plr.Kill();
@@ -77,8 +78,7 @@ class Harta{
     void Drawnpcs(sf::RenderWindow& window_){
         for(auto &it:npcvect){
             Npc* npcpointer= it;
-            std::string mov = "Mov";
-            if(typeid(*npcpointer).name() != mov)window_.draw(npcpointer->getSprite("render"));
+            if(typeid(*npcpointer) != typeid(Mov))window_.draw(npcpointer->getSprite("render"));
             else{
                 auto npcpointer2 = dynamic_cast<Mov*>(npcpointer);
                 window_.draw(npcpointer2->getSprite("render"));
@@ -89,9 +89,7 @@ class Harta{
 public:
     Harta() = default;
     Harta(const Harta& other) : lvlwon {other.lvlwon}, Obj { other.Obj}, Textures { other.Textures } {
-        while(!npcvect.empty()){
-
-        }
+        npcvect.clear();
         for(auto& it:other.npcvect){
             npcvect.push_back(it);
         }
@@ -106,12 +104,9 @@ public:
         }
         return *this;
     }
-    /*~Harta(){
-        for(int i = 0 ; i < npcvect.size() ; i++){
-            std::cout << *npcvect[i] << " a \n";
-            delete npcvect[i];
-        }
-    }*/
+    ~Harta(){
+        npcvect.clear();
+    }
     friend std::ostream& operator<<(std::ostream& os, const Harta& h) {
         os << " Nr obiecte: " << h.Obj.size() << '\n';
         return os;

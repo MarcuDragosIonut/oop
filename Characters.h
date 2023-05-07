@@ -58,6 +58,7 @@ public:
 class Player : public Character{
     int jump = 0, doublejump = 1, jumpcd = 0; // jump: cat mai are de sarit, doublejump:
     int interact = 0; // daca a luat un item (entitate)
+    int score = 0;
     std::vector<std::pair<Effect,sf::Clock>> plref;
 public:
     Player(const sf::Texture &texture, const sf::Texture &textureDead, double pozX, double pozY): Character(texture, textureDead, pozX, pozY) {}
@@ -77,6 +78,14 @@ public:
             }
             plref.push_back({*(e.getEffect()), timpefect});
         }
+    }
+
+    void IncreaseScore(int added_score){
+        score += added_score;
+    }
+
+    int getScore(){
+        return score;
     }
 
     int interaction() const{
@@ -163,6 +172,7 @@ public:
 class Npc : public Character{
 protected:
     int dir = 0;
+    int score_value = 1;
     std::string order = "idle";
 public:
     Npc(const sf::Texture& t, const sf::Texture& tdead, double x, double y) : Character(t, tdead, x, y) { ms = 2;}
@@ -171,6 +181,10 @@ public:
         return os;
     }
     virtual ~Npc() = default;
+
+    int getScoreValue(){
+        return score_value;
+    }
 
     void setOrder(const std::string& ord){
         if(ord=="patrol") dir = 1;
@@ -211,6 +225,7 @@ public:
     Verde(const sf::Texture &t, const sf::Texture &tdead, double x, double y) : Npc(t, tdead, x, y){
         ms = 5;
         dir = -1;
+        score_value = 2;
     }
     ~Verde() = default;
     void setMovement() override{
@@ -249,7 +264,7 @@ public:
     }
     ~Mov() = default;
     void setMovement() override{
-        if(floor < gravity && !(order=="jump" && dir == 1)) poz_y += gravity - floor;
+        if(floor < gravity && !(order=="jump" && dir == 1 && mort == 0)) poz_y += gravity - floor;
         if(mort == 0) {
             if (order == "patrol") {
                 if (dir == 1) {
@@ -288,7 +303,12 @@ public:
             transparent = transparent ^ 1;
             movc.restart();
         }
-        if(transparent) sp.setColor(sf::Color(sp.getColor().r, sp.getColor().g, sp.getColor().b, 100));
+        if(transparent)
+        {
+            sf::Color spcolor = sp.getColor();
+            spcolor.a = 100;
+            sp.setColor(spcolor);
+        }
         sp.setPosition(poz_x, poz_y);
         return sp;
     }
@@ -301,6 +321,7 @@ public:
         dir = 1;
         jp = 3;
         ms = 3;
+        score_value = 2;
     }
     ~Fantoma() = default;
     void setMovement() override{

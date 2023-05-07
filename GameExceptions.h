@@ -15,6 +15,7 @@ void pointerentitate(std::shared_ptr<Effect> ent){
     }
 }
 
+
 class eroare_textura : public eroare_joc{
 public:
     explicit eroare_textura(const std::string& m) : eroare_joc(m){};
@@ -23,5 +24,10 @@ public:
 void loadtxtr(bool ret){
     if(!ret){
         throw eroare_textura("nu s-a incarcat textura");
+    }
+}
+void loadfont(bool ret){
+    if(!ret){
+        throw eroare_textura("nu s-a incarcat fontul");
     }
 }

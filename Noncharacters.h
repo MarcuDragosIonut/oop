@@ -30,7 +30,7 @@ class Entity {
     int tip = 0, sters = 0;
     std::string ent_nume="def";
     sf::Texture ent_txtr;
-    std::shared_ptr<Effect> entef;
+    std::shared_ptr<Effect> entef; // efectul entitatii
     int poz_x = 0, poz_y = 0, floor = 0;
 public:
     Entity() = default;

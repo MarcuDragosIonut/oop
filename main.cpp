@@ -9,6 +9,8 @@
 #include "Characters.h"
 #include "Gamemap.h"
 
+
+
 int main()
 {
     sf::RenderWindow window(sf::VideoMode(640, 360), "", sf::Style::Close);
@@ -22,63 +24,55 @@ int main()
     sf::Color bgcolor(214, 192, 103);
     bg.setFillColor(bgcolor);
 
+    sf::Font textfont;
+    try{
+        loadfont(textfont.loadFromFile("textures/arcade.TTF"));
+    }
+    catch(eroare_textura &err){
+        std::cout << err.what() << '\n';
+    }
+    sf::Text score;
+    score.setFont(textfont);
+    score.setFillColor(sf::Color::Black);
+    score.setString("0");
+    score.setPosition(12, 0);
+
     sf::Texture p_txtr, n_txtr, verde_txtr, mov_txtr, fantoma_txtr; // characters
     sf::Texture floor1_txtr, perete_txtr, peretemic_txtr, stea_txtr, e_t, finpost_t; // map blocks si map items
     sf::Texture mortmesj_t, finmesj_t; // mesaje
     sf::Texture pdead_txtr, ndead_txtr, verdedead_txtr, movdead_txtr, fantomadead_txtr; // dead characters
 
-    // player
     try{
-        loadtxtr(p_txtr.loadFromFile("textures\\p.png"));
-        loadtxtr(pdead_txtr.loadFromFile("textures\\pmort.png"));
+        // player
+        loadtxtr(p_txtr.loadFromFile("textures/p.png"));
+        loadtxtr(pdead_txtr.loadFromFile("textures/pmort.png"));
+
+        //npcs
+        loadtxtr(n_txtr.loadFromFile("textures/n1.png"));
+        loadtxtr(ndead_txtr.loadFromFile("textures/n1mort.png"));
+        loadtxtr(verde_txtr.loadFromFile("textures/verde.png"));
+        loadtxtr(verdedead_txtr.loadFromFile("textures/verdemort.png"));
+        loadtxtr(mov_txtr.loadFromFile("textures/mov.png"));
+        loadtxtr(movdead_txtr.loadFromFile("textures/movmort.png"));
+        loadtxtr(fantoma_txtr.loadFromFile("textures/fantoma.png"));
+        loadtxtr(fantomadead_txtr.loadFromFile("textures/fantomamort.png"));
+
+        //blocks
+        loadtxtr(floor1_txtr.loadFromFile("textures/floor1.png"));
+        loadtxtr(perete_txtr.loadFromFile("textures/perete.png"));
+        loadtxtr(peretemic_txtr.loadFromFile("textures/peretemic.png"));
+        loadtxtr(finpost_t.loadFromFile("textures/fin.png"));
+
+        //items + buton
+        loadtxtr(stea_txtr.loadFromFile("textures/stea.png"));
+        loadtxtr(e_t.loadFromFile("textures/e.png"));
+
+        //mesaje
+        loadtxtr(finmesj_t.loadFromFile("textures/finmes.png"));
+        loadtxtr(mortmesj_t.loadFromFile("textures/mortmes.png"));
     }
     catch(eroare_textura& err){
-        std::cout << "player: " << err.what() << '\n';
-    }
-
-    //npcs
-    try{
-        loadtxtr(n_txtr.loadFromFile("textures\\n1.png"));
-        loadtxtr(ndead_txtr.loadFromFile("textures\\n1mort.png"));
-        loadtxtr(verde_txtr.loadFromFile("textures\\verde.png"));
-        loadtxtr(verdedead_txtr.loadFromFile("textures\\verdemort.png"));
-        loadtxtr(mov_txtr.loadFromFile("textures\\mov.png"));
-        loadtxtr(movdead_txtr.loadFromFile("textures\\movmort.png"));
-        loadtxtr(fantoma_txtr.loadFromFile("textures\\fantoma.png"));
-        loadtxtr(fantomadead_txtr.loadFromFile("textures\\fantomamort.png"));
-
-    }
-    catch(eroare_textura& err){
-        std::cout << "npc: " << err.what() << '\n';
-    }
-
-    //blocks
-    try{
-        loadtxtr(floor1_txtr.loadFromFile("textures\\floor1.png"));
-        loadtxtr(perete_txtr.loadFromFile("textures\\perete.png"));
-        loadtxtr(peretemic_txtr.loadFromFile("textures\\peretemic.png"));
-        loadtxtr(finpost_t.loadFromFile("textures\\fin.png"));
-    }
-    catch(eroare_textura& err){
-        std::cout << "blocks: " << err.what() << '\n';
-    }
-
-    //items + buton
-    try{
-        loadtxtr(stea_txtr.loadFromFile("textures\\stea.png"));
-        loadtxtr(e_t.loadFromFile("textures\\e.png"));
-    }
-    catch(eroare_textura& err){
-        std::cout << "items: " << err.what() << '\n';
-    }
-
-    //mesaje
-    try{
-        loadtxtr(finmesj_t.loadFromFile("textures\\finmes.png"));
-        loadtxtr(mortmesj_t.loadFromFile("textures\\mortmes.png"));
-    }
-    catch(eroare_textura& err){
-        std::cout << "mesaje: " << err.what() << '\n';
+        std::cout << err.what() << '\n';
     }
 
     Player p{p_txtr, pdead_txtr, 250.0, 200.0};
@@ -168,16 +162,28 @@ int main()
             }
         }
         if(window.hasFocus()) {
+            sf::Vector2f score_poz = score.getPosition();
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) || sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
                 sf::View winview=window.getView();
                 int m = p.Command("d");
-                if(m == 1 && 100 < p.getX() && p.getX() < 1800 )window.setView(sf::View(sf::Vector2f(winview.getCenter().x + p.getMS() + p.getmsmod(), winview.getCenter().y), winview.getSize()));
+                if(m == 1 && 100 < p.getX() && p.getX() < 1800 ) {
+                    window.setView(sf::View(
+                            sf::Vector2f(winview.getCenter().x + p.getMS() + p.getmsmod(), winview.getCenter().y),
+                            winview.getSize()));
+                    score_poz.x += p.getMS() + p.getmsmod();
+                }
             }
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) || sf::Keyboard::isKeyPressed(sf::Keyboard::Left)){
                 sf::View winview=window.getView();
                 int m = p.Command("a");
-                if(m == 1 && 100 < p.getX() && p.getX() < 1800 )window.setView(sf::View(sf::Vector2f(winview.getCenter().x - p.getMS() - p.getmsmod(), winview.getCenter().y), winview.getSize()));
+                if(m == 1 && 100 < p.getX() && p.getX() < 1800 ) {
+                    window.setView(sf::View(
+                            sf::Vector2f(winview.getCenter().x - p.getMS() - p.getmsmod(), winview.getCenter().y),
+                            winview.getSize()));
+                    score_poz.x -= p.getMS() + p.getmsmod();
+                }
             }
+            score.setPosition(score_poz);
         }
         if(p.getY() > 500) p.Kill();
         window.draw(bg);
@@ -186,6 +192,8 @@ int main()
         for(auto& item:itemvect){
             if(item->status() == 0)window.draw(item->getSprite());
         }
+        score.setString(std::to_string(p.getScore()));
+        window.draw(score);
         window.display();
         window.clear();
     }

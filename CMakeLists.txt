@@ -141,5 +141,5 @@ endif()
 # copy binaries to "bin" folder; these are uploaded as artifacts on each release
 # update name in .github/workflows/cmake.yml:29 when changing "bin" name here
 install(TARGETS ${PROJECT_NAME} DESTINATION bin)
-install(DIRECTORY  DESTINATION bin)
+install(DIRECTORY textures DESTINATION bin)
 # install(FILES some_file1.txt some_file2.md DESTINATION bin)
