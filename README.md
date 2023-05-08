@@ -55,3 +55,4 @@
 ## Resurse
 
 - [SFML](https://github.com/SFML/SFML/tree/aa82ea132b9296a31922772027ad5d14c1fa381b) (Zlib)
+- [paint.net](https://www.getpaint.net/) Aplicatia in care am desenat texturile
