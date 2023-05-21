@@ -1,4 +1,3 @@
-#include <SFML/Graphics.hpp>
 #include "GameExceptions.h"
 
 class Character{
@@ -15,6 +14,12 @@ public:
     Character(const Character& other) : poz_x {other.poz_x}, poz_y {other.poz_y}, char_txtr {other.char_txtr}, char_dead_txtr {other.char_dead_txtr} {}
     ~Character() = default;
     double getX() const{
+        try{
+            outofbounds(poz_x);
+        }
+        catch(eroare_entitate& err){
+            std::cout << err.what();
+        }
         return poz_x;
     }
     double getY() const{
@@ -344,6 +349,30 @@ public:
                 }
             }
         }
+    }
+};
+
+class CharacterFactory{
+    static inline std::map<std::string, sf::Texture> CharacterTextures;
+public:
+    static void addTexture(std::string nume, sf::Texture& textura){
+        CharacterTextures[nume] = textura;
+    }
+    template <typename T>
+    static Orange orange(T x, T y) {
+        return Orange(CharacterTextures["n_txtr"], CharacterTextures["ndead_txtr"], double(x), double(y));
+    }
+    template <typename T>
+    static Verde verde(T x, T y) {
+        return Verde(CharacterTextures["verde_txtr"], CharacterTextures["verdedead_txtr"], double(x), double(y));
+    }
+    template <typename T>
+    static Mov mov(T x, T y) {
+        return Mov(CharacterTextures["mov_txtr"], CharacterTextures["movdead_txtr"], double(x), double(y));
+    }
+    template <typename T>
+    static Fantoma fantoma(T x, T y) {
+        return Fantoma(CharacterTextures["fantoma_txtr"], CharacterTextures["fantomadead_txtr"], double(x), double(y));
     }
 };
 

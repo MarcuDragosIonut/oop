@@ -1,5 +1,4 @@
-#include <SFML/Graphics.hpp>
-#include <memory>
+
 
 class Effect{
     int jumpmod = 0, movmod = 0; // jump power modifier, movement speed modifier
@@ -10,11 +9,6 @@ public:
         os << eff.nume << '\n';
         return os;
     }
-    /*void setStats(const std::string& n, int j, int m){
-        nume = n;
-        jumpmod = j;
-        movmod = m;
-    }*/
     int getJ(){
         return jumpmod;
     }
@@ -42,14 +36,12 @@ public:
         if(other.entef != nullptr){
             entef = std::make_shared<Effect>(*(other.entef));
         }
-        std::cout << "cc\n";
     }
     Entity& operator=(const Entity& other) {
         tip = other.tip;
         ent_nume = other.ent_nume;
         ent_txtr = other.ent_txtr;
         entef = std::make_shared<Effect>(*(other.entef));
-        std::cout << "=\n";
         return *this;
     }
     ~Entity() = default;

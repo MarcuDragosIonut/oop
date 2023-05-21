@@ -46,13 +46,13 @@
 ## Tema 3
 
 #### Cerințe
-- [ ] 2 șabloane de proiectare (design patterns)
-- [ ] o funcție șablon (template) cu sens; minim 2 instanțieri
+- [x] 2 șabloane de proiectare (design patterns)
+- [x] o funcție șablon (template) cu sens; minim 2 instanțieri
 - [ ] o clasă șablon cu sens; minim 2 instanțieri
 <!-- - [ ] o specializare pe funcție/clasă șablon -->
-- [ ] tag de `git`: de exemplu `v0.3` sau `v1.0`
+- [x] tag de `git`: de exemplu `v0.3` sau `v1.0`
 
 ## Resurse
 
 - [SFML](https://github.com/SFML/SFML/tree/aa82ea132b9296a31922772027ad5d14c1fa381b) (Zlib)
-- [paint.net](https://www.getpaint.net/) Aplicatia in care am desenat texturile
+- [paint.net](https://www.getpaint.net/) Aplicatia in care am desenat texturile (toate texturile sunt facute de mine)

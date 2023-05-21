@@ -15,6 +15,11 @@ void pointerentitate(std::shared_ptr<Effect> ent){
     }
 }
 
+void outofbounds(double x){
+    if(x < -300){
+        throw eroare_entitate("entitatea/caracterul nu este unde ar trebui\n");
+    }
+}
 
 class eroare_textura : public eroare_joc{
 public:

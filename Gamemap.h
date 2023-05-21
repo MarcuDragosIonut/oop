@@ -1,5 +1,3 @@
-#include <SFML/Graphics.hpp>
-
 class Harta{
     int lvlwon = 0;
     std::vector< std::pair< Entity, std::pair<double,double> > > Obj;
@@ -22,6 +20,30 @@ class Harta{
                     }
                 }
             }
+        }
+    }
+
+    void Player_col(Player &plr, const sf::Sprite &ps, const sf::FloatRect &pb_low, const sf::FloatRect &pb_high,
+                    const sf::FloatRect &pb_left, const sf::FloatRect &pb_right,
+                    const std::pair<Entity, std::pair<double, double>> &it, const sf::Sprite &sp, int &podea_,
+                    int &sus_,
+                    int &dreapta_, int &stanga_) {
+        if (podea_ == 0 && sp.getGlobalBounds().intersects(pb_low)){
+            if(it.first.getTip() == 3) lvlwon = 1;
+            podea_ = plr.getGravity() - ( sp.getPosition().y - plr.getY() - ps.getTexture()->getSize().y);
+        }
+        if (sp.getGlobalBounds().intersects(pb_high)) {
+            if(sus_ == 0) sus_ =  plr.getJP()+plr.getjpmod() - (plr.getY()- (sp.getPosition().y + sp.getTexture()->getSize().y));
+        }
+        if (sp.getGlobalBounds().intersects(pb_right))
+        {
+            if(it.first.getTip() == 3) lvlwon = 1;
+            if(dreapta_ == 0)dreapta_ = plr.getMS()+plr.getmsmod() - (sp.getPosition().x-plr.getX()-pb_right.getSize().x);
+        }
+        if (sp.getGlobalBounds().intersects(pb_left))
+        {
+            if(it.first.getTip() == 3) lvlwon = 1;
+            if(stanga_ == 0 ) stanga_ = plr.getMS()+plr.getmsmod() - (plr.getX()-sp.getPosition().x-sp.getTexture()->getSize().x);
         }
     }
 
@@ -88,28 +110,19 @@ class Harta{
 
 public:
     Harta() = default;
-    Harta(const Harta& other) : lvlwon {other.lvlwon}, Obj { other.Obj}, Textures { other.Textures } {
-        npcvect.clear();
-        for(auto& it:other.npcvect){
-            npcvect.push_back(it);
-        }
-    }
-    Harta& operator=(const Harta& other){
-        lvlwon = other.lvlwon;
-        Obj = other.Obj;
-        Textures = other.Textures;
-        npcvect.clear();
-        for(auto& it:other.npcvect){
-            npcvect.push_back(it);
-        }
-        return *this;
-    }
+    Harta(const Harta& other) = delete;
+    Harta& operator=(const Harta& other) = delete;
     ~Harta(){
         npcvect.clear();
     }
     friend std::ostream& operator<<(std::ostream& os, const Harta& h) {
         os << " Nr obiecte: " << h.Obj.size() << '\n';
         return os;
+    }
+
+    static Harta& get_map(){
+        static Harta harta;
+        return harta;
     }
 
     void addNpc(Npc& npc){
@@ -149,25 +162,7 @@ public:
             sp.setTexture(it.first.getTexture());
             sp.setPosition(it.second.first, it.second.second); //second.first = x second.second = y
 
-            //player collision
-            if (podea_ == 0 && sp.getGlobalBounds().intersects(pb_low)){
-                if(it.first.getTip() == 3) lvlwon = 1;
-                podea_ = plr.getGravity() - ( sp.getPosition().y - plr.getY() - ps.getTexture()->getSize().y);
-            }
-            if (sp.getGlobalBounds().intersects(pb_high)) {
-                if(sus_ == 0) sus_ =  plr.getJP()+plr.getjpmod() - (plr.getY()- (sp.getPosition().y + sp.getTexture()->getSize().y));
-            }
-            if (sp.getGlobalBounds().intersects(pb_right))
-            {
-                if(it.first.getTip() == 3) lvlwon = 1;
-                if(dreapta_ == 0)dreapta_ = plr.getMS()+plr.getmsmod() - (sp.getPosition().x-plr.getX()-pb_right.getSize().x);
-            }
-            if (sp.getGlobalBounds().intersects(pb_left))
-            {
-                if(it.first.getTip() == 3) lvlwon = 1;
-                if(stanga_ == 0 ) stanga_ = plr.getMS()+plr.getmsmod() - (plr.getX()-sp.getPosition().x-sp.getTexture()->getSize().x);
-            }
-            //player collision
+            Player_col(plr, ps, pb_low, pb_high, pb_left, pb_right, it, sp, podea_, sus_, dreapta_, stanga_);//player collision
 
             Item_col(itemvect, itemcollisions, sp); //item collisions
 
