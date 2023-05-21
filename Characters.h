@@ -355,7 +355,7 @@ public:
 class CharacterFactory{
     static inline std::map<std::string, sf::Texture> CharacterTextures;
 public:
-    static void addTexture(std::string nume, sf::Texture& textura){
+    static void addTexture(std::string nume, const sf::Texture& textura){
         CharacterTextures[nume] = textura;
     }
     template <typename T>
