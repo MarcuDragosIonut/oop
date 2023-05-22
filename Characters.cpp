@@ -65,12 +65,7 @@ void Player::AddEff(Entity &e) {
     if (e.getTip() == 1)
     {
         sf::Clock timpefect;
-        try{
-            pointerentitate(e.getEffect());
-        }
-        catch(eroare_entitate& err){
-            std::cout << "Effect: " << err.what() << '\n';
-        }
+        if(e.getEffect() == nullptr) std::cout << "efect null\n";
         plref.push_back({*(e.getEffect()), timpefect});
     }
 }
@@ -149,6 +144,20 @@ int Player::Command(const std::string &c) {
     return miscare;
 }
 
+void Player::setMovement() {
+    int jpmod = getjpmod();
+    if(mort) jump = 0;
+    if (floor < gravity && jump == 0) poz_y += gravity-floor ;
+    if(!mort) {
+        if (jump > 5) {
+            poz_y -= jp + jpmod - up;
+        }
+        if (up != 0 && jump > 5) jump = 4; // daca se da cu capu' sa cada
+        if (jump > 0) jump--;
+        if (floor != 0) doublejump = 0;
+    }
+}
+
 int Npc::getScoreValue() {
     return score_value;
 }
@@ -205,6 +214,12 @@ void Verde::setMovement() {
     }
 }
 
+Verde::Verde(const sf::Texture &t, const sf::Texture &tdead, double x, double y) : Npc(t, tdead, x, y){
+    ms = 5;
+    dir = -1;
+    score_value = 2;
+}
+
 void Mov::setMovement() {
     if(floor < gravity && !(order=="jump" && dir == 1 && mort == 0)) poz_y += gravity - floor;
     if(mort == 0) {
@@ -256,6 +271,10 @@ sf::Sprite Mov::getSprite(const std::string &caz) {
     return sp;
 }
 
+Mov::Mov(const sf::Texture &t, const sf::Texture &tdead, double x, double y) : Npc(t, tdead, x, y){
+    jp = 3;
+}
+
 void Fantoma::setMovement() {
     if(mort == 1 && floor < gravity) poz_y += gravity - floor;
     if(mort == 0) {
@@ -276,4 +295,11 @@ void Fantoma::setMovement() {
             }
         }
     }
+}
+
+Fantoma::Fantoma(const sf::Texture &t, const sf::Texture &tmort, double x, double y) : Npc(t, tmort, x, y){
+    dir = 1;
+    jp = 3;
+    ms = 3;
+    score_value = 2;
 }

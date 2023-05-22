@@ -1,6 +1,4 @@
-#include <memory>
 #include "GameExceptions.h"
-#include "Noncharacters.h"
 
 void outofbounds(double x) {
     if(x < -300){
@@ -8,20 +6,14 @@ void outofbounds(double x) {
     }
 }
 
-void pointerentitate(std::shared_ptr<Effect> ent) {
-    if(ent == nullptr) {
-        throw eroare_entitate("pointerul de entitate este nullptr");
-    }
-}
-
 void loadtxtr(bool ret) {
     if(!ret){
-        throw eroare_textura("nu s-a incarcat textura");
+        throw eroare_resursa("nu s-a incarcat textura");
     }
 }
 
 void loadfont(bool ret) {
     if(!ret){
-        throw eroare_textura("nu s-a incarcat fontul");
+        throw eroare_resursa("nu s-a incarcat fontul");
     }
 }

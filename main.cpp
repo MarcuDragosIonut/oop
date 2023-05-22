@@ -28,7 +28,7 @@ int main()
     try{
         loadfont(textfont.loadFromFile("textures/arcade.TTF"));
     }
-    catch(eroare_textura &err){
+    catch(eroare_resursa &err){
         std::cout << err.what() << '\n';
     }
     sf::Text score;
@@ -67,7 +67,7 @@ int main()
         loadtxtr(Textures["finmesj"].loadFromFile("textures/finmes.png"));
         loadtxtr(Textures["mortmesj"].loadFromFile("textures/mortmes.png"));
     }
-    catch(eroare_textura& err){
+    catch(eroare_resursa& err){
         std::cout << err.what() << '\n';
     }
 

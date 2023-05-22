@@ -55,19 +55,7 @@ public:
     int getmsmod();
 
     int getjpmod();
-    void setMovement() override{
-        int jpmod = getjpmod();
-        if(mort) jump = 0;
-        if (floor < gravity && jump == 0) poz_y += gravity-floor ;
-        if(!mort) {
-           if (jump > 5) {
-               poz_y -= jp + jpmod - up;
-           }
-           if (up != 0 && jump > 5) jump = 4; // daca se da cu capu' sa cada
-           if (jump > 0) jump--;
-           if (floor != 0) doublejump = 0;
-       }
-    }
+    void setMovement() override;
 
     int Command(const std::string& c);
 };
@@ -103,11 +91,7 @@ public:
 
 class Verde : public Npc{
 public:
-    Verde(const sf::Texture &t, const sf::Texture &tdead, double x, double y) : Npc(t, tdead, x, y){
-        ms = 5;
-        dir = -1;
-        score_value = 2;
-    }
+    Verde(const sf::Texture &t, const sf::Texture &tdead, double x, double y);
     ~Verde() = default;
     void setMovement() override;
 };
@@ -116,9 +100,7 @@ class Mov : public Npc{
     int airtime = 0, transparent = 0;
     sf::Clock movc;
 public:
-    Mov(const sf::Texture &t, const sf::Texture &tdead, double x, double y) : Npc(t, tdead, x, y){
-        jp = 3;
-    }
+    Mov(const sf::Texture &t, const sf::Texture &tdead, double x, double y);
     ~Mov() = default;
     void setMovement() override;
     sf::Sprite getSprite(const std::string& caz="renger") override;
@@ -127,12 +109,7 @@ public:
 class Fantoma: public Npc{
     int movlen = 0; // cat s-a miscat
 public:
-    Fantoma(const sf::Texture& t, const sf::Texture& tmort, double x, double y) : Npc(t, tmort, x, y){
-        dir = 1;
-        jp = 3;
-        ms = 3;
-        score_value = 2;
-    }
+    Fantoma(const sf::Texture& t, const sf::Texture& tmort, double x, double y);
     ~Fantoma() = default;
     void setMovement() override;
 };
