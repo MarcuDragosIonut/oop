@@ -1,4 +1,6 @@
-#include "GameExceptions.h"
+#pragma once
+
+#include "Noncharacters.h"
 
 class Character{
 protected:
@@ -13,50 +15,16 @@ public:
             poz_x { poz_x_ }, poz_y{ poz_y_ }, char_txtr{ texture_ }, char_dead_txtr {texture_dead_} {}
     Character(const Character& other) : poz_x {other.poz_x}, poz_y {other.poz_y}, char_txtr {other.char_txtr}, char_dead_txtr {other.char_dead_txtr} {}
     ~Character() = default;
-    double getX() const{
-        try{
-            outofbounds(poz_x);
-        }
-        catch(eroare_entitate& err){
-            std::cout << err.what();
-        }
-        return poz_x;
-    }
-    double getY() const{
-        return poz_y;
-    }
-    int getMS() const{
-        return ms;
-    }
-    int getJP() const{
-        return jp;
-    }
-    int getStatus() const{
-        return mort;
-    }
-    void Kill(){
-        mort = 1;
-        char_txtr = char_dead_txtr;
-    }
-    static int getGravity(){
-        return gravity;
-    }
-    void setCollisions(int floor_, int up_, int left_, int right_){
-        floor = floor_;
-        up = up_;
-        left = left_;
-        right = right_;
-    }
+    double getX() const;
+    double getY() const;
+    int getMS() const;
+    int getJP() const;
+    int getStatus() const;
+    void Kill();
+    static int getGravity();
+    void setCollisions(int floor_, int up_, int left_, int right_);
     virtual void setMovement() = 0;
-    virtual sf::Sprite getSprite(const std::string& caz="render" ){
-        if(caz=="render"){
-            setMovement();
-        }
-        sf::Sprite sp;
-        sp.setTexture(char_txtr);
-        sp.setPosition(poz_x, poz_y);
-        return sp;
-    }
+    virtual sf::Sprite getSprite(const std::string& caz="render" );
 
 };
 
@@ -71,68 +39,22 @@ public:
         os << " Poz player: " << plr.poz_x << ' ' << plr.poz_y << '\n';
         return os;
     }
-    void AddEff(Entity& e) {
-        if (e.getTip() == 1)
-        {
-            sf::Clock timpefect;
-            try{
-                pointerentitate(e.getEffect());
-            }
-            catch(eroare_entitate& err){
-                std::cout << "Effect: " << err.what() << '\n';
-            }
-            plref.push_back({*(e.getEffect()), timpefect});
-        }
-    }
+    void AddEff(Entity& e);
 
-    void IncreaseScore(int added_score){
-        score += added_score;
-    }
+    void IncreaseScore(int added_score);
 
-    int getScore(){
-        return score;
-    }
+    int getScore();
 
-    int interaction() const{
-        return interact;
-    }
+    int interaction() const;
 
-    int getJumpCD() const {
-        return jumpcd;
-    }
+    int getJumpCD() const;
 
-    void setJumpCD(int jumpcd_) {
-        jumpcd = jumpcd_;
-    }
+    void setJumpCD(int jumpcd_);
 
 
-    int getmsmod(){
-        int msmod = 0;
-        std::set<std::string> efecte_aplicate;
-        for(auto& it:plref){
-            if(it.second.getElapsedTime() < sf::seconds(30)){
-                if(!efecte_aplicate.contains(it.first.getName())){
-                    msmod += it.first.getM();
-                    efecte_aplicate.insert(it.first.getName());
-                }
-            }
-        }
-        return msmod;
-    }
+    int getmsmod();
 
-    int getjpmod(){
-        int jpmod = 0;
-        std::set<std::string> efecte_aplicate;
-        for(auto& it:plref){
-            if(it.second.getElapsedTime() < sf::seconds(30)){
-                if(!efecte_aplicate.contains(it.first.getName())) {
-                    jpmod += it.first.getJ();
-                    efecte_aplicate.insert(it.first.getName());
-                }
-            }
-        }
-        return jpmod;
-    }
+    int getjpmod();
     void setMovement() override{
         int jpmod = getjpmod();
         if(mort) jump = 0;
@@ -147,31 +69,7 @@ public:
        }
     }
 
-    int Command(const std::string& c){
-        int miscare = 0;
-        if(mort == 0) {
-            if(c=="jump" && (floor>0 || (jump < 3 && !floor && !doublejump)))
-            {
-                if(floor == 0 && up == 0) doublejump = 1;
-                jump += 25;
-                miscare = 1;
-            }
-            int msmod = getmsmod();
-            if (c == "a") {
-                double oldpoz = poz_x;
-                poz_x -= ms + msmod - left;
-                if (poz_x != oldpoz)miscare = 1;
-            }
-            if (c == "d") {
-                double oldpoz = poz_x;
-                poz_x += ms + msmod - right;
-                if (poz_x != oldpoz)miscare = 1;
-            }
-            if (c == "e") interact = 1;
-            if (c == "e_release") interact = 0;
-        }
-        return miscare;
-    }
+    int Command(const std::string& c);
 };
 
 class Npc : public Character{
@@ -187,19 +85,11 @@ public:
     }
     virtual ~Npc() = default;
 
-    int getScoreValue(){
-        return score_value;
-    }
+    int getScoreValue();
 
-    void setOrder(const std::string& ord){
-        if(ord=="patrol") dir = 1;
-        order = ord;
-    }
+    void setOrder(const std::string& ord);
 
-    void setPosition(double x, double y){
-        poz_x = x;
-        poz_y = y;
-    }
+    void setPosition(double x, double y);
 
     //virtual void setMovement() = 0;
 };
@@ -208,21 +98,7 @@ class Orange : public Npc{
 public:
     Orange(const sf::Texture &t, const sf::Texture &tdead, double x, double y) : Npc(t, tdead, x, y) {}
     ~Orange() = default;
-    void setMovement() override{
-        if(floor < gravity) poz_y += gravity - floor;
-        if(!mort) {
-            if (order == "patrol") {
-                if (dir == 1) {
-                    if (right > 0) dir = -1;
-                    if (floor > 0)poz_x += ms - right;
-                }
-                if (dir == -1) {
-                    if (left > 0) dir = 1;
-                    if (floor > 0)poz_x -= ms - left;
-                }
-            }
-        }
-    }
+    void setMovement() override;
 };
 
 class Verde : public Npc{
@@ -233,31 +109,7 @@ public:
         score_value = 2;
     }
     ~Verde() = default;
-    void setMovement() override{
-        if(mort == 1 && floor < gravity) poz_y += gravity - floor;
-        if(mort == 0) {
-            if (order == "patrol") {
-                if (dir == 1) {
-                    if (right > 0) dir = -1;
-                    poz_x += ms - right;
-                }
-                if (dir == -1) {
-                    if (left > 0) dir = 1;
-                    poz_x -= ms - left;
-                }
-            }
-            if(order=="fly"){
-                if(dir == 1){
-                    if(!up)poz_y -= jp;
-                    if(poz_y < -100 || up > 0) dir = -1;
-                }
-                else {
-                    poz_y += gravity - floor;
-                    if(floor > 0 || poz_y > 350) dir = 1;
-                }
-            }
-        }
-    }
+    void setMovement() override;
 };
 
 class Mov : public Npc{
@@ -268,55 +120,8 @@ public:
         jp = 3;
     }
     ~Mov() = default;
-    void setMovement() override{
-        if(floor < gravity && !(order=="jump" && dir == 1 && mort == 0)) poz_y += gravity - floor;
-        if(mort == 0) {
-            if (order == "patrol") {
-                if (dir == 1) {
-                    if (right > 0) dir = -1;
-                    poz_x += ms - right;
-                }
-                if (dir == -1) {
-                    if (left > 0) dir = 1;
-                    poz_x -= ms - left;
-                }
-            }
-            if(order=="jump"){
-                if(dir == 1){
-                    if(airtime == 10 || up) dir = -1;
-                    if(!up) {
-                        airtime++;
-                        poz_y -= jp;
-                    }
-                }
-                else {
-                    if(floor) {
-                        dir = 1;
-                        airtime = 0;
-                    }
-                }
-            }
-        }
-    }
-    sf::Sprite getSprite(const std::string& caz="renger") override{
-        sf::Sprite sp;
-        sp.setTexture(char_txtr);
-        if(caz=="render"){
-            setMovement();
-        }
-        if(movc.getElapsedTime().asSeconds() > sf::seconds(10).asSeconds()){
-            transparent = transparent ^ 1;
-            movc.restart();
-        }
-        if(transparent)
-        {
-            sf::Color spcolor = sp.getColor();
-            spcolor.a = 100;
-            sp.setColor(spcolor);
-        }
-        sp.setPosition(poz_x, poz_y);
-        return sp;
-    }
+    void setMovement() override;
+    sf::Sprite getSprite(const std::string& caz="renger") override;
 };
 
 class Fantoma: public Npc{
@@ -329,27 +134,7 @@ public:
         score_value = 2;
     }
     ~Fantoma() = default;
-    void setMovement() override{
-        if(mort == 1 && floor < gravity) poz_y += gravity - floor;
-        if(mort == 0) {
-            if (order == "patrol") {
-                if (dir == 1) {
-                    poz_x += ms - right;
-                    poz_y -= jp - up;
-                    movlen++;
-                }
-                if (dir == -1) {
-                    poz_x -= ms - left;
-                    poz_y += jp - floor;
-                    movlen++;
-                }
-                if(movlen == 35){
-                    dir *= -1;
-                    movlen = 0;
-                }
-            }
-        }
-    }
+    void setMovement() override;
 };
 
 class CharacterFactory{

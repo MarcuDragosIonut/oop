@@ -7,6 +7,7 @@
 #include <set>
 #include <memory>
 #include "Noncharacters.h"
+#include "GameExceptions.h"
 #include "Characters.h"
 #include "Gamemap.h"
 

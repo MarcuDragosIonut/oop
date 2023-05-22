@@ -1,4 +1,7 @@
+#pragma once
 
+#include <memory>
+#include <SFML/Graphics.hpp>
 
 class Effect{
     int jumpmod = 0, movmod = 0; // jump power modifier, movement speed modifier
@@ -9,15 +12,9 @@ public:
         os << eff.nume << '\n';
         return os;
     }
-    int getJ(){
-        return jumpmod;
-    }
-    int getM(){
-        return movmod;
-    }
-    const std::string& getName(){
-        return nume;
-    }
+    int getJ();
+    int getM();
+    const std::string& getName();
 };
 
 class Entity {
@@ -37,53 +34,25 @@ public:
             entef = std::make_shared<Effect>(*(other.entef));
         }
     }
-    Entity& operator=(const Entity& other) {
-        tip = other.tip;
-        ent_nume = other.ent_nume;
-        ent_txtr = other.ent_txtr;
-        entef = std::make_shared<Effect>(*(other.entef));
-        return *this;
-    }
+    Entity& operator=(const Entity& other);
     ~Entity() = default;
-    friend std::ostream& operator<<(std::ostream& os, const Entity& ent) {
-        os << " Nume " << ent.ent_nume << " Tip " << ent.tip << '\n';
-        return os;
-    }
+    friend std::ostream& operator<<(std::ostream& os, const Entity& ent);
     int getTip() const { return tip; }
     sf::Texture& getTexture(){
         return ent_txtr;
     }
 
-    void setPoz(double x, double y){
-        poz_x = x;
-        poz_y = y;
-    }
+    void setPoz(double x, double y);
 
-    void setPodea(int floor_){
-        floor = floor_;
-    }
+    void setPodea(int floor_);
 
-    void sterge(){
-        sters = 1;
-    }
+    void sterge();
 
-    int status(){
-        return sters;
-    }
+    int status();
 
-    void setEffect(std::shared_ptr<Effect> newef) {
-        entef = newef;
-    }
+    void setEffect(std::shared_ptr<Effect> newef);
 
-    std::shared_ptr<Effect> getEffect() {
-        return entef;
-    }
-    sf::Sprite getSprite(const std::string& caz="render"){
-        sf::Sprite itemsprite;
-        itemsprite.setTexture(ent_txtr);
-        if(floor == 0 && caz=="render") poz_y += 2;
-        itemsprite.setPosition(poz_x, poz_y);
-        return itemsprite;
-    }
+    std::shared_ptr<Effect> getEffect();
+    sf::Sprite getSprite(const std::string& caz="render");
 
 };
