@@ -10,7 +10,7 @@
 #include "GameExceptions.h"
 #include "Characters.h"
 #include "Gamemap.h"
-
+#include "GameHandler.h"
 
 int main()
 {
@@ -85,8 +85,7 @@ int main()
     Entity stea{ Textures["stea_txtr"], "stea", 1, 450, 100};
     Effect efstea{"stea", 2, 2};
     stea.setEffect(std::make_shared<Effect>(efstea));
-    Entity stea2 = stea, stea3;
-    stea3 = stea;
+    Entity stea2 = stea, stea3 = stea;
     stea2.setPoz(900, -500);
     stea3.setPoz(1500, -500);
     std::vector<Entity*> itemvect;
@@ -101,28 +100,11 @@ int main()
     h.addTexture("e",Textures["e"]);
     h.addTexture("finmesaj", Textures["finmesj"]);
     h.addTexture("mortmesaj", Textures["mortmesj"]);
-
-    //map building
-    for(double i = 0; i <= 2000; i+=40){
-        if(i < 1250 || i > 1360)h.addObj(floor1, {i, 300.0});
-        if(i == 0 || i + 40 == 720) h.addObj(perete, {i, 210});
-    }
-    for(double i = 400; i<= 560; i+=40){
-        h.addObj( floor1, {i, 180});
-    }
-    for(double i = 800; i<= 920; i+=40){
-        h.addObj( floor1, {i, 120});
-    }
-    for(double i = 1400; i<= 1520; i+=40){
-        h.addObj( floor1, {i, 120});
-    }
-    h.addObj(perete, {1400, 210});
-    for(double i = 1240; i>950 ; i-=120) h.addObj(peretemic, {i, 255});
-    for(double i = 1600; i<=1760 ; i+=40){
-        h.addObj(floor1, {i, 210});
-    }
-    h.addObj(finmark, {2000, 300-Textures["finpost_t"].getSize().y});
-    //map building
+    LevelBuilder::addEntity("floor1", &floor1);
+    LevelBuilder::addEntity("perete", &perete);
+    LevelBuilder::addEntity("peretemic", &peretemic);
+    LevelBuilder::addEntity("finmark", &finmark);
+    LevelBuilder::level1(h);
 
     Orange n1 = CharacterFactory::orange(200, 60), n2 = CharacterFactory::orange(450, 40);
     Orange n3 = n1 ,n4 = n1;
@@ -150,57 +132,9 @@ int main()
     mv1.setOrder("jump");
     f1.setOrder("patrol");
 
+    GameState::SetUp();
     while (window.isOpen()) {
-        while (window.pollEvent(event)) {
-
-            if (event.type == sf::Event::Closed || ( event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) ) {
-                window.close();
-            }
-            if(event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::E) p.Command("e");
-            if(event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::E) p.Command("e_release");
-            if(p.getJumpCD() == 1 && event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Space) {
-                p.setJumpCD(0);
-            }
-            if (p.getJumpCD() == 0 && event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Space) {
-                p.Command("jump");
-                p.setJumpCD(1);
-            }
-        }
-        if(window.hasFocus()) {
-            sf::Vector2f score_poz = score.getPosition();
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) || sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
-                sf::View winview=window.getView();
-                int m = p.Command("d");
-                if(m == 1 && 100 < p.getX() && p.getX() < 1800 ) {
-                    window.setView(sf::View(
-                            sf::Vector2f(winview.getCenter().x + p.getMS() + p.getmsmod(), winview.getCenter().y),
-                            winview.getSize()));
-                    score_poz.x += p.getMS() + p.getmsmod();
-                }
-            }
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) || sf::Keyboard::isKeyPressed(sf::Keyboard::Left)){
-                sf::View winview=window.getView();
-                int m = p.Command("a");
-                if(m == 1 && 100 < p.getX() && p.getX() < 1800 ) {
-                    window.setView(sf::View(
-                            sf::Vector2f(winview.getCenter().x - p.getMS() - p.getmsmod(), winview.getCenter().y),
-                            winview.getSize()));
-                    score_poz.x -= p.getMS() + p.getmsmod();
-                }
-            }
-            score.setPosition(score_poz);
-        }
-        if(p.getY() > 500) p.Kill();
-        window.draw(bg);
-        window.draw(p.getSprite());
-        h.drawMap(window, p, itemvect);
-        for(auto& item:itemvect){
-            if(item->status() == 0)window.draw(item->getSprite());
-        }
-        score.setString(std::to_string(p.getScore()));
-        window.draw(score);
-        window.display();
-        window.clear();
+        GameState::RunGame(window, event, bg, p, score, h, itemvect);
     }
 
     return 0;

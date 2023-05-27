@@ -176,3 +176,29 @@ void Harta::drawMap(sf::RenderWindow &window_, Player &plr, std::vector<Entity *
         window_.draw(mortmesaj);
     }
 }
+
+void LevelBuilder::addEntity(std::string nume_ent, Entity* ent) {
+    Entities[nume_ent] = ent;
+}
+
+void LevelBuilder::level1(Harta& harta){
+    for(double i = 0; i <= 2000; i+=40){
+        if(i < 1250 || i > 1360)harta.addObj(*Entities["floor1"], {i, 300.0});
+        if(i == 0 || i + 40 == 720) harta.addObj(*Entities["perete"], {i, 210});
+    }
+    for(double i = 400; i<= 560; i+=40){
+        harta.addObj( *Entities["floor1"], {i, 180});
+    }
+    for(double i = 800; i<= 920; i+=40){
+        harta.addObj( *Entities["floor1"], {i, 120});
+    }
+    for(double i = 1400; i<= 1520; i+=40){
+        harta.addObj( *Entities["floor1"], {i, 120});
+    }
+    harta.addObj(*Entities["perete"], {1400, 210});
+    for(double i = 1240; i>950 ; i-=120) harta.addObj(*Entities["peretemic"], {i, 255});
+    for(double i = 1600; i<=1760 ; i+=40){
+        harta.addObj(*Entities["floor1"], {i, 210});
+    }
+    harta.addObj(*Entities["finmark"], {2000, 120});
+}

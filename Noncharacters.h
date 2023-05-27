@@ -50,6 +50,7 @@ public:
 
     int status();
 
+
     void setEffect(std::shared_ptr<Effect> newef);
 
     std::shared_ptr<Effect> getEffect();
