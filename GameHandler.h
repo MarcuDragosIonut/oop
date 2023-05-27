@@ -2,6 +2,7 @@
 
 #include "Noncharacters.h"
 #include "Gamemap.h"
+#include "Characters.h"
 
 class GameState{
     inline static int state = 0;
@@ -19,4 +20,13 @@ public:
     static void EventHandling1(sf::RenderWindow &window, const sf::Event &event, Player &p);
 
     static void SetUp();
+};
+
+
+template <typename T>
+class ScoreCalculator{
+public:
+    static int CalculateScore(const T& target){
+        return 1*target.getMS()+1*target.getJP();
+    }
 };

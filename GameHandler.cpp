@@ -5,6 +5,7 @@
 #include "Characters.h"
 #include "GameExceptions.h"
 
+
 void GameState::SetUp(){
     loadtxtr(GameState::menubuttontxtr.loadFromFile("textures/start.png"));
     GameState::menubutton.setTexture(GameState::menubuttontxtr);

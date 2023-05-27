@@ -5,10 +5,9 @@
 #include "Characters.h"
 #include "GameExceptions.h"
 #include "Noncharacters.h"
+#include "GameHandler.h"
 
-//
-// Created by Laptop on 5/22/2023.
-//
+
 double Character::getX() const {
     try{
         outofbounds(poz_x);
@@ -60,6 +59,8 @@ sf::Sprite Character::getSprite(const std::string &caz) {
     sp.setPosition(poz_x, poz_y);
     return sp;
 }
+
+
 
 void Player::AddEff(Entity &e) {
     if (e.getTip() == 1)
@@ -217,7 +218,7 @@ void Verde::setMovement() {
 Verde::Verde(const sf::Texture &t, const sf::Texture &tdead, double x, double y) : Npc(t, tdead, x, y){
     ms = 5;
     dir = -1;
-    score_value = 2;
+    score_value = ScoreCalculator<Verde>::CalculateScore(*this);
 }
 
 void Mov::setMovement() {
@@ -273,6 +274,7 @@ sf::Sprite Mov::getSprite(const std::string &caz) {
 
 Mov::Mov(const sf::Texture &t, const sf::Texture &tdead, double x, double y) : Npc(t, tdead, x, y){
     jp = 3;
+    score_value = ScoreCalculator<Mov>::CalculateScore(*this);
 }
 
 void Fantoma::setMovement() {
@@ -301,5 +303,5 @@ Fantoma::Fantoma(const sf::Texture &t, const sf::Texture &tmort, double x, doubl
     dir = 1;
     jp = 3;
     ms = 3;
-    score_value = 2;
+   score_value = ScoreCalculator<Fantoma>::CalculateScore(*this);
 }

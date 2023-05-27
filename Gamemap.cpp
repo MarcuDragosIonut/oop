@@ -65,7 +65,7 @@ void Harta::Npc_col(Player &plr, const sf::Sprite &pscurent, const sf::FloatRect
         sf::Sprite npcs = npcvect[npcindex]->getSprite("collision");
         npcs.setPosition(npcs.getPosition().x, npcs.getPosition().y+plr.getGravity());
         sf::FloatRect npcb_low = npcs.getGlobalBounds();
-        npcs.setPosition(npcs.getPosition().x, npcs.getPosition().y-plr.getGravity()-2);
+        npcs.setPosition(npcs.getPosition().x, npcs.getPosition().y-plr.getGravity()-npcvect[npcindex]->getJP());
         sf::FloatRect npcb_high = npcs.getGlobalBounds();
         npcs.setPosition(npcs.getPosition().x-+npcvect[npcindex]->getMS(),npcs.getPosition().y+2);
         sf::FloatRect npcb_left = npcs.getGlobalBounds();
