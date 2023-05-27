@@ -48,6 +48,6 @@ class LevelBuilder{
 protected:
     inline static std::map<std::string, Entity*> Entities;
 public:
-    static void addEntity(const std::string nume_ent, Entity* ent);
+    static void addEntity(const std::string& nume_ent, Entity* ent);
     static void level1(Harta& harta);
 };

@@ -177,9 +177,6 @@ void Harta::drawMap(sf::RenderWindow &window_, Player &plr, std::vector<Entity *
     }
 }
 
-void LevelBuilder::addEntity(std::string nume_ent, Entity* ent) {
-    Entities[nume_ent] = ent;
-}
 
 void LevelBuilder::level1(Harta& harta){
     for(double i = 0; i <= 2000; i+=40){
@@ -201,4 +198,8 @@ void LevelBuilder::level1(Harta& harta){
         harta.addObj(*Entities["floor1"], {i, 210});
     }
     harta.addObj(*Entities["finmark"], {2000, 120});
+}
+
+void LevelBuilder::addEntity(const std::string &nume_ent, Entity *ent) {
+    Entities[nume_ent] = ent;
 }
