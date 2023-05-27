@@ -48,7 +48,7 @@
 #### Cerințe
 - [x] 2 șabloane de proiectare (design patterns)
 - [x] o funcție șablon (template) cu sens; minim 2 instanțieri
-- [ ] o clasă șablon cu sens; minim 2 instanțieri
+- [x] o clasă șablon cu sens; minim 2 instanțieri
 <!-- - [ ] o specializare pe funcție/clasă șablon -->
 - [x] tag de `git`: de exemplu `v0.3` sau `v1.0`
 
