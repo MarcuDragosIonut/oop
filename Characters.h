@@ -114,27 +114,20 @@ public:
     void setMovement() override;
 };
 
-class CharacterFactory{
+class CharacterTexturesHolder{
     static inline std::map<std::string, sf::Texture> CharacterTextures;
 public:
-    static void addTexture(std::string nume, const sf::Texture& textura){
-        CharacterTextures[nume] = textura;
-    }
-    template <typename T>
-    static Orange orange(T x, T y) {
-        return Orange(CharacterTextures["n_txtr"], CharacterTextures["ndead_txtr"], double(x), double(y));
-    }
-    template <typename T>
-    static Verde verde(T x, T y) {
-        return Verde(CharacterTextures["verde_txtr"], CharacterTextures["verdedead_txtr"], double(x), double(y));
-    }
-    template <typename T>
-    static Mov mov(T x, T y) {
-        return Mov(CharacterTextures["mov_txtr"], CharacterTextures["movdead_txtr"], double(x), double(y));
-    }
-    template <typename T>
-    static Fantoma fantoma(T x, T y) {
-        return Fantoma(CharacterTextures["fantoma_txtr"], CharacterTextures["fantomadead_txtr"], double(x), double(y));
+    static void addTexture(std::string nume, const sf::Texture& textura);
+    static sf::Texture getCharTexture(const std::string& charname);
+};
+
+template <typename T>
+class CharacterFactory{
+public:
+    static T generate(double x, double y) {
+        std::string charname = typeid(T).name();
+        return T(CharacterTexturesHolder::getCharTexture(charname),
+                 CharacterTexturesHolder::getCharTexture(charname+"dead"), x, y);
     }
 };
 

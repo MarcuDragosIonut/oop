@@ -305,3 +305,11 @@ Fantoma::Fantoma(const sf::Texture &t, const sf::Texture &tmort, double x, doubl
     ms = 3;
    score_value = ScoreCalculator<Fantoma>::CalculateScore(*this);
 }
+
+void CharacterTexturesHolder::addTexture(std::string nume, const sf::Texture &textura) {
+    CharacterTextures[nume] = textura;
+}
+
+sf::Texture CharacterTexturesHolder::getCharTexture(const std::string& charname){
+    return CharacterTextures[charname];
+}

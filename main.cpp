@@ -73,14 +73,14 @@ int main()
 
     Player p{Textures["p_txtr"], Textures["pdead_txtr"], 250.0, 200.0};
 
-    CharacterFactory::addTexture("n_txtr",Textures["n_txtr"]);
-    CharacterFactory::addTexture("ndead_txtr",Textures["ndead_txtr"]);
-    CharacterFactory::addTexture("verde_txtr",Textures["verde_txtr"]);
-    CharacterFactory::addTexture("verdedead_txtr",Textures["verdedead_txtr"]);
-    CharacterFactory::addTexture("mov_txtr",Textures["mov_txtr"]);
-    CharacterFactory::addTexture("movdead_txtr",Textures["movdead_txtr"]);
-    CharacterFactory::addTexture("fantoma_txtr",Textures["fantoma_txtr"]);
-    CharacterFactory::addTexture("fantomadead_txtr",Textures["fantomadead_txtr"]);
+    CharacterTexturesHolder::addTexture(std::string{typeid(Orange).name()},Textures["n_txtr"]);
+    CharacterTexturesHolder::addTexture(std::string{typeid(Orange).name()}+"dead",Textures["ndead_txtr"]);
+    CharacterTexturesHolder::addTexture(std::string{typeid(Verde).name()},Textures["verde_txtr"]);
+    CharacterTexturesHolder::addTexture(std::string{typeid(Verde).name()}+"dead",Textures["verdedead_txtr"]);
+    CharacterTexturesHolder::addTexture(std::string{typeid(Mov).name()},Textures["mov_txtr"]);
+    CharacterTexturesHolder::addTexture(std::string{typeid(Mov).name()}+"dead",Textures["movdead_txtr"]);
+    CharacterTexturesHolder::addTexture(std::string{typeid(Fantoma).name()},Textures["fantoma_txtr"]);
+    CharacterTexturesHolder::addTexture(std::string{typeid(Fantoma).name()}+"dead",Textures["fantomadead_txtr"]);
 
     Entity stea{ Textures["stea_txtr"], "stea", 1, 450, 100};
     Effect efstea{"stea", 2, 2};
@@ -106,15 +106,15 @@ int main()
     LevelBuilder::addEntity("finmark", &finmark);
     LevelBuilder::level1(h);
 
-    Orange n1 = CharacterFactory::orange(200, 60), n2 = CharacterFactory::orange(450, 40);
+    Orange n1 = CharacterFactory<Orange>::generate(200, 60), n2 = CharacterFactory<Orange>::generate(450, 40);
     Orange n3 = n1 ,n4 = n1;
     n3.setPosition(1500, 210);
     n4.setPosition(1400, -100);
-    Verde v1 = CharacterFactory::verde(1100, 100);
+    Verde v1 = CharacterFactory<Verde>::generate(1100, 100);
     Verde v2 = v1;
-    Mov mv1 = CharacterFactory::mov(1400, -100);
+    Mov mv1 = CharacterFactory<Mov>::generate(1400, -100);
     v2.setPosition(900, 210);
-    Fantoma f1 = CharacterFactory::fantoma( 500, 100);
+    Fantoma f1 = CharacterFactory<Fantoma>::generate( 500, 100);
     h.addNpc(n1);
     h.addNpc(n2);
     h.addNpc(n3);
