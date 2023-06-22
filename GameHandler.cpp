@@ -9,7 +9,7 @@
 
 void GameState::RunGame(sf::RenderWindow &window, sf::Event &event, sf::RectangleShape& bg,
                         Player &p, sf::Text &score,
-                        Harta& h, std::vector<Entity*> &itemvect,std::map<std::string, sf::Texture>& Textures) {
+                        Harta& h, std::vector<Entity*> &itemvect,const std::map<std::string,sf::Texture>& Textures) {
     window.draw(bg);
     if(state == 1) {
         while (window.pollEvent(event)) {
@@ -29,7 +29,7 @@ void GameState::RunGame(sf::RenderWindow &window, sf::Event &event, sf::Rectangl
     }
     else{
         sf::Sprite menubutton;
-        sf::Texture menubuttontxtr = Textures["menubutton"];
+        sf::Texture menubuttontxtr = Textures.at("menubutton");
         menubutton.setTexture(menubuttontxtr);
         menubutton.setPosition(320-menubuttontxtr.getSize().x/2, 180-menubuttontxtr.getSize().y);
         while (window.pollEvent(event)) {
