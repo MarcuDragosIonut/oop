@@ -124,7 +124,7 @@ public:
 template <typename T>
 class CharacterFactory{
 public:
-    static T generate(CharacterTexturesHolder cth, double x, double y) {
+    static T generate(CharacterTexturesHolder& cth, double x, double y) {
         std::string charname = typeid(T).name();
         return T(cth.getCharTexture(charname),
                  cth.getCharTexture(charname+"dead"), x, y);
