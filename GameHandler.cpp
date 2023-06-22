@@ -3,18 +3,13 @@
 #include "GameHandler.h"
 #include "Gamemap.h"
 #include "Characters.h"
-#include "GameExceptions.h"
 
 
-void GameState::SetUp(){
-    loadtxtr(GameState::menubuttontxtr.loadFromFile("textures/start.png"));
-    GameState::menubutton.setTexture(GameState::menubuttontxtr);
-    GameState::menubutton.setPosition(320-menubuttontxtr.getSize().x/2, 180-menubuttontxtr.getSize().y);
-}
+
 
 void GameState::RunGame(sf::RenderWindow &window, sf::Event &event, sf::RectangleShape& bg,
                         Player &p, sf::Text &score,
-                        Harta& h, std::vector<Entity*> &itemvect) {
+                        Harta& h, std::vector<Entity*> &itemvect,std::map<std::string, sf::Texture>& Textures) {
     window.draw(bg);
     if(state == 1) {
         while (window.pollEvent(event)) {
@@ -33,6 +28,10 @@ void GameState::RunGame(sf::RenderWindow &window, sf::Event &event, sf::Rectangl
         window.draw(score);
     }
     else{
+        sf::Sprite menubutton;
+        sf::Texture menubuttontxtr = Textures["menubutton"];
+        menubutton.setTexture(menubuttontxtr);
+        menubutton.setPosition(320-menubuttontxtr.getSize().x/2, 180-menubuttontxtr.getSize().y);
         while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed || (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape)) {
                 window.close();

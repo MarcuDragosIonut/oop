@@ -62,6 +62,7 @@ int main()
         //items + buton
         loadtxtr(Textures["stea_txtr"].loadFromFile("textures/stea.png"));
         loadtxtr(Textures["e"].loadFromFile("textures/e.png"));
+        loadtxtr(Textures["menubutton"].loadFromFile("textures/start.png"));
 
         //mesaje
         loadtxtr(Textures["finmesj"].loadFromFile("textures/finmes.png"));
@@ -132,9 +133,8 @@ int main()
     mv1.setOrder("jump");
     f1.setOrder("patrol");
 
-    GameState::SetUp();
     while (window.isOpen()) {
-        GameState::RunGame(window, event, bg, p, score, h, itemvect);
+        GameState::RunGame(window, event, bg, p, score, h, itemvect, Textures);
     }
 
     return 0;
