@@ -115,19 +115,19 @@ public:
 };
 
 class CharacterTexturesHolder{
-    static inline std::map<std::string, sf::Texture> CharacterTextures;
+    std::map<std::string, sf::Texture> CharacterTextures;
 public:
-    static void addTexture(std::string nume, const sf::Texture& textura);
-    static sf::Texture getCharTexture(const std::string& charname);
+    void addTexture(std::string nume, const sf::Texture& textura);
+    sf::Texture getCharTexture(const std::string& charname);
 };
 
 template <typename T>
 class CharacterFactory{
 public:
-    static T generate(double x, double y) {
+    static T generate(CharacterTexturesHolder cth, double x, double y) {
         std::string charname = typeid(T).name();
-        return T(CharacterTexturesHolder::getCharTexture(charname),
-                 CharacterTexturesHolder::getCharTexture(charname+"dead"), x, y);
+        return T(cth.getCharTexture(charname),
+                 cth.getCharTexture(charname+"dead"), x, y);
     }
 };
 
