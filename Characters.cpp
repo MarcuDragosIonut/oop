@@ -96,7 +96,7 @@ int Player::getmsmod() {
     std::set<std::string> efecte_aplicate;
     for(auto& it:plref){
         if(it.second.getElapsedTime() < sf::seconds(30)){
-            if(!efecte_aplicate.contains(it.first.getName())){
+            if(!efecte_aplicate.count(it.first.getName())){
                 msmod += it.first.getM();
                 efecte_aplicate.insert(it.first.getName());
             }
@@ -110,7 +110,7 @@ int Player::getjpmod() {
     std::set<std::string> efecte_aplicate;
     for(auto& it:plref){
         if(it.second.getElapsedTime() < sf::seconds(30)){
-            if(!efecte_aplicate.contains(it.first.getName())) {
+            if(!efecte_aplicate.count(it.first.getName())) {
                 jpmod += it.first.getJ();
                 efecte_aplicate.insert(it.first.getName());
             }
